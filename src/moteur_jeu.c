@@ -2,6 +2,8 @@
 #include "game_structures.h"
 #include "lecteur_csv.h"
 
+// Salut
+
 void AfficheTuileDbg(TuileStruct t);
 
 int main(int argc, char * argv[])
