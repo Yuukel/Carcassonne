@@ -19,22 +19,17 @@ void PrintGridDbg(TileStruct grid[DIMENSION_MAX][DIMENSION_MAX]);
 enum State {Draw, Tile, Pawn, End}; // Etats du jeu
 enum Type {Pre, Route, Ville, Blason, Abbaye, Fin}; //Check les traductions
 
-TileStruct pioche[71];
+TileStruct pile[71];
 TileStruct grid[DIMENSION_MAX][DIMENSION_MAX];
 
 int main(int argc, char * argv[])
 {
-    TileStruct t = { 0, {"V", "R", "P", "R"}, "R" };
-    //enum State gameState;
+    //system("clear");
 
-    PrintTileDbg(t);
-    system("clear");
-    PrintGridDbg(grid);
-    system("clear");
-    parseur_csv(argv[1]);
+    parseur_csv("tuiles_base_simplifiees.csv", pile);
+    PrintTileDbg(pile[0]);
 
     return 0;
-    //parseur_csv();
 }
 
 void PrintTileDbg(TileStruct t){
