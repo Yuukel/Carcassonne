@@ -17,9 +17,9 @@ void PrintTileDbg(TileStruct t);
 void PrintGridDbg(TileStruct grid[DIMENSION_MAX][DIMENSION_MAX]);
 
 enum State {Draw, Tile, Pawn, End}; // Etats du jeu
-enum Type {Pre, Route, Ville, Abbaye, Fin}; //Check les traductions
+enum Type {Pre, Route, Ville, Blason, Abbaye, Fin}; //Check les traductions
 
-TileStruct pioche[72];
+TileStruct pioche[71];
 TileStruct grid[DIMENSION_MAX][DIMENSION_MAX];
 
 int main(int argc, char * argv[])
