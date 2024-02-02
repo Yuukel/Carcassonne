@@ -2,21 +2,53 @@
 #include "game_structures.h"
 #include "lecteur_csv.h"
 
-// Salut
+// A faire : dispatcher dans plusieurs fichiers etc
 
-void AfficheTuileDbg(TuileStruct t);
+//*************************************
+
+#define DIMENSION_MAX 10 // En attendant ?
+
+//*************************************
+
+// Fonctions de debug
+void PrintTileDbg(TileStruct t);
+void PrintGridDbg(TileStruct grid[DIMENSION_MAX][DIMENSION_MAX]);
+
+enum State {Draw, Tile, Pawn, End}; // Etats du jeu
+enum Type {Pre, Route, Ville, Abbaye, Fin}; //Check les traductions
+
+TileStruct pioche[72];
+TileStruct grid[DIMENSION_MAX][DIMENSION_MAX];
 
 int main(int argc, char * argv[])
 {
-    TuileStruct t = { 0, {"V", "R", "P", "R"}, "R" };
+    TileStruct t = { 0, {"V", "R", "P", "R"}, "R" };
+    //enum State gameState;
 
-    AfficheTuileDbg(t);
+    PrintTileDbg(t);
+    PrintGridDbg(grid);
+
     return 0;
     //parseur_csv();
 }
 
-void AfficheTuileDbg(TuileStruct t){
+void PrintTileDbg(TileStruct t){
     printf("\t%s\t\n",t.cotes[0]);
     printf("%s\t%s\t%s\n", t.cotes[1], t.centre, t.cotes[2]);
     printf("\t%s\t\n",t.cotes[3]);
+}
+
+void PrintGridDbg(TileStruct grid[DIMENSION_MAX][DIMENSION_MAX]){
+    printf("\t");
+    for(int i = 0 ; i < DIMENSION_MAX ; i++){
+        printf("%d\t", i);
+    }
+    printf("\n");
+    for(int y = 0 ; y < DIMENSION_MAX ; y++){
+        printf("%d\t",y);
+        for(int x = 0 ; x < DIMENSION_MAX ; x++){
+            printf("x\t");
+        }
+        printf("\n");
+    }
 }

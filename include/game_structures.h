@@ -2,9 +2,9 @@
 #define GAME_STRUCTURES
 
 typedef struct{
-    int identifiant;
+    int id;
     char * cotes[4];
     char * centre;
-} TuileStruct;
+} TileStruct;
 
 #endif // GAME_STRUCTURES
