@@ -30,6 +30,8 @@ int main(int argc, char * argv[])
     PrintTileDbg(t);
     system("clear");
     PrintGridDbg(grid);
+    system("clear");
+    parseur_csv(argv[1]);
 
     return 0;
     //parseur_csv();
