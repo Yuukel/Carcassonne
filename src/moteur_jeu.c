@@ -27,7 +27,8 @@ int main(int argc, char * argv[])
     //system("clear");
 
     parseur_csv("tuiles_base_simplifiees.csv", pile);
-    PrintTileDbg(pile[0]);
+    printf("%s\n",pile[0].centre);
+    //PrintTileDbg(pile[0]);
 
     return 0;
 }
