@@ -19,16 +19,19 @@ void PrintGridDbg(TileStruct grid[DIMENSION_MAX][DIMENSION_MAX]);
 enum State {Draw, Tile, Pawn, End}; // Etats du jeu
 enum Type {Pre, Route, Ville, Blason, Abbaye, Fin}; //Check les traductions
 
-TileStruct pile[71];
+TileStruct pile[72];
 TileStruct grid[DIMENSION_MAX][DIMENSION_MAX];
 
 int main(int argc, char * argv[])
 {
     //system("clear");
-
+    // TileStruct emptyTile = {{"","","",""},""};
+    // for(int i = 0 ; i < 72 ; i++){
+    //     pile[i] = emptyTile;
+    // }
     parseur_csv("tuiles_base_simplifiees.csv", pile);
-    printf("%s\n",pile[0].centre);
-    //PrintTileDbg(pile[0]);
+    // printf("\n");
+    // PrintTileDbg(pile[0]);
 
     return 0;
 }

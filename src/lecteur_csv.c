@@ -10,16 +10,18 @@ void parseur_csv(char * fileName, TileStruct * pile)
     FILE * fichier = fopen(fileName,"r");
     int nb, index = 0;
     char temp[1024];
-    TileStruct tile;
     while(fgets(temp,1024,fichier)){
+        TileStruct tile;
         nb = 0;
         char * value = strtok(temp,", ");
         while(value != NULL){
-            if(nb < 5) tile.cotes[nb] = value;
-            else tile.centre = value;
+            //printf("%s ",value);
+            if(nb < 4) strcpy(tile.cotes[nb],value);
+            else strcpy(tile.centre,value);
             nb++;
             value = strtok(NULL,", ");
         }
+        //printf("%d ", index);
         pile[index] = tile;
         index++;
     }
