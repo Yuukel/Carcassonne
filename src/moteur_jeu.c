@@ -1,8 +1,10 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "game_structures.h"
 #include "lecteur_csv.h"
 
 // A faire : dispatcher dans plusieurs fichiers etc
+// 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
 
 //*************************************
 
@@ -26,6 +28,7 @@ int main(int argc, char * argv[])
     //enum State gameState;
 
     PrintTileDbg(t);
+    system("clear");
     PrintGridDbg(grid);
 
     return 0;
