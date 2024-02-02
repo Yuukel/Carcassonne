@@ -10,6 +10,13 @@
 
 #define DIMENSION_MAX 10 // En attendant ?
 
+#define RESET "\e[0m"
+#define ROUTE "\e[1;30m\e[103m"
+#define PRE "\e[1;30m\e[42m"
+#define VILLE "\e[1;30m\e[43m"
+#define BLASON "\e[1;30m\e[46m"
+#define ABBAYE "\e[1;30m\e[41m"
+
 //*************************************
 
 // Fonctions de debug
@@ -25,21 +32,36 @@ TileStruct grid[DIMENSION_MAX][DIMENSION_MAX];
 int main(int argc, char * argv[])
 {
     //system("clear");
-    // TileStruct emptyTile = {{"","","",""},""};
-    // for(int i = 0 ; i < 72 ; i++){
-    //     pile[i] = emptyTile;
-    // }
     parseur_csv("tuiles_base_simplifiees.csv", pile);
+    //for(int i = 0 ; i < 4 ; i++) printf("%s ", pile[0].cotes[i]);
+    //printf("%c ", pile[0].centre);
     // printf("\n");
-    // PrintTileDbg(pile[0]);
+    for(int i = 0 ; i < 10 ; i++){
+        PrintTileDbg(pile[i]);
+        printf("\n");
+    }
+
+    PrintTileDbg(pile[54]);
 
     return 0;
 }
 
+char * Couleur(char c){
+    if(c == 'r') return ROUTE;
+    if(c == 'v') return VILLE;
+    if(c == 'a') return ABBAYE;
+    if(c == 'b') return BLASON;
+    if(c == 'p') return PRE;
+
+    return "";
+}
+
 void PrintTileDbg(TileStruct t){
-    printf("\t%s\t\n",t.cotes[0]);
-    printf("%s\t%s\t%s\n", t.cotes[1], t.centre, t.cotes[2]);
-    printf("\t%s\t\n",t.cotes[3]);
+    printf("   %s %c %s   \n",Couleur(t.cotes[0]),t.cotes[0],RESET);
+    printf("%s %c %s",Couleur(t.cotes[3]),t.cotes[3],RESET);
+    printf("%s %c %s",Couleur(t.centre),t.centre,RESET);
+    printf("%s %c %s\n",Couleur(t.cotes[1]),t.cotes[1],RESET);
+    printf("   %s %c %s   \n",Couleur(t.cotes[2]),t.cotes[2],RESET);
 }
 
 void PrintGridDbg(TileStruct grid[DIMENSION_MAX][DIMENSION_MAX]){

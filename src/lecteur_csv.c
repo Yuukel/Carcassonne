@@ -16,8 +16,8 @@ void parseur_csv(char * fileName, TileStruct * pile)
         char * value = strtok(temp,", ");
         while(value != NULL){
             //printf("%s ",value);
-            if(nb < 4) strcpy(tile.cotes[nb],value);
-            else strcpy(tile.centre,value);
+            if(nb < 4) tile.cotes[nb] = value[0];
+            else tile.centre = value[0];
             nb++;
             value = strtok(NULL,", ");
         }
