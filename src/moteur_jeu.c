@@ -22,6 +22,7 @@
 // Fonctions de debug
 void PrintTileDbg(TileStruct t);
 void PrintGridDbg(TileStruct grid[DIMENSION_MAX][DIMENSION_MAX]);
+TileStruct RotateTile(TileStruct t, int sens);
 
 enum State {Draw, Tile, Pawn, End}; // Etats du jeu
 enum Type {Pre, Route, Ville, Blason, Abbaye, Fin}; //Check les traductions
@@ -36,12 +37,21 @@ int main(int argc, char * argv[])
     //for(int i = 0 ; i < 4 ; i++) printf("%s ", pile[0].cotes[i]);
     //printf("%c ", pile[0].centre);
     // printf("\n");
-    for(int i = 0 ; i < 10 ; i++){
-        PrintTileDbg(pile[i]);
-        printf("\n");
-    }
+    // for(int i = 0 ; i < 10 ; i++){
+    //     PrintTileDbg(pile[i]);
+    //     printf("\n");
+    // }
 
-    PrintTileDbg(pile[54]);
+    PrintTileDbg(pile[0]);
+    printf("\n");
+    pile[0] = RotateTile(pile[0],1);
+    PrintTileDbg(pile[0]);
+    printf("\n");
+    pile[0] = RotateTile(pile[0],-1);
+    PrintTileDbg(pile[0]);
+    printf("\n");
+    pile[0] = RotateTile(pile[0],-1);
+    PrintTileDbg(pile[0]);
 
     return 0;
 }
@@ -77,4 +87,24 @@ void PrintGridDbg(TileStruct grid[DIMENSION_MAX][DIMENSION_MAX]){
         }
         printf("\n");
     }
+}
+
+TileStruct RotateTile(TileStruct t, int sens){
+    char temp; 
+    if(sens > 0){
+        temp = t.cotes[3];
+        t.cotes[3] = t.cotes[2];
+        t.cotes[2] = t.cotes[1];
+        t.cotes[1] = t.cotes[0];
+        t.cotes[0] = temp;
+    }
+    else if(sens < 0){
+        temp = t.cotes[0];
+        t.cotes[0] = t.cotes[1];
+        t.cotes[1] = t.cotes[2];
+        t.cotes[2] = t.cotes[3];
+        t.cotes[3] = temp;
+    }
+
+    return t;
 }
