@@ -23,6 +23,7 @@
 void PrintTileDbg(TileStruct t);
 void PrintGridDbg(TileStruct grid[DIMENSION_MAX][DIMENSION_MAX]);
 TileStruct RotateTile(TileStruct t, int sens);
+void Turn();
 
 enum State {Draw, Tile, Pawn, End}; // Etats du jeu
 enum Type {Pre, Route, Ville, Blason, Abbaye, Fin}; //Check les traductions
@@ -34,24 +35,19 @@ int main(int argc, char * argv[])
 {
     //system("clear");
     parseur_csv("tuiles_base_simplifiees.csv", pile);
-    //for(int i = 0 ; i < 4 ; i++) printf("%s ", pile[0].cotes[i]);
-    //printf("%c ", pile[0].centre);
-    // printf("\n");
-    // for(int i = 0 ; i < 10 ; i++){
-    //     PrintTileDbg(pile[i]);
-    //     printf("\n");
-    // }
 
-    PrintTileDbg(pile[0]);
-    printf("\n");
-    pile[0] = RotateTile(pile[0],1);
-    PrintTileDbg(pile[0]);
-    printf("\n");
-    pile[0] = RotateTile(pile[0],-1);
-    PrintTileDbg(pile[0]);
-    printf("\n");
-    pile[0] = RotateTile(pile[0],-1);
-    PrintTileDbg(pile[0]);
+    Turn();
+
+    // PrintTileDbg(pile[0]);
+    // printf("\n");
+    // pile[0] = RotateTile(pile[0],1);
+    // PrintTileDbg(pile[0]);
+    // printf("\n");
+    // pile[0] = RotateTile(pile[0],-1);
+    // PrintTileDbg(pile[0]);
+    // printf("\n");
+    // pile[0] = RotateTile(pile[0],-1);
+    // PrintTileDbg(pile[0]);
 
     return 0;
 }
@@ -107,4 +103,14 @@ TileStruct RotateTile(TileStruct t, int sens){
     }
 
     return t;
+}
+
+void Turn(){
+    int choice;
+    PrintTileDbg(pile[1]);
+    while(scanf("%d",&choice) != 0){
+        pile[1] = RotateTile(pile[1], choice);
+        system("clear");
+        PrintTileDbg(pile[1]);
+    }
 }
