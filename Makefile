@@ -15,7 +15,7 @@ run: $(EXEC)
 	$(BIN)$<
 
 $(EXEC): moteur_jeu.o lecteur_csv.o
-	$(CC) $(OBJ)* -I $(INC) -o $(BIN)$@
+	$(CC) $(OBJ)* -I $(INC) -o $(BIN)$@ -lncurses
 	
 moteur_jeu.o: $(SRC)moteur_jeu.c
 	$(CC) $(CFLAGS) $< -c -I $(INC) -o $(OBJ)$@
