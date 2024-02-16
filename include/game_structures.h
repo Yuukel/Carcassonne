@@ -11,18 +11,23 @@ typedef struct{
 
 typedef struct{
     int id;
+    int color;
+	int score;
+	int nbPions;
+    int isHuman;
 } PlayerStruct;
 
 typedef struct{
+    int nbPlayers;
     PlayerStruct playerList[5];
     TileStruct pile[72];
     TileStruct grid[143][143];
-} Game;
+} GameStruct;
 
 typedef struct{
     PlayerStruct currentPlayer;
     TileStruct currentTile;
     enum State currentState;
-} Turn;
+} TurnStruct;
 
 #endif // GAME_STRUCTURES
