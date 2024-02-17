@@ -183,38 +183,44 @@ void SelectPlayers(GameStruct game){
         erase();
         for(int i = 0 ; i < 5 ; i++){
             attron(COLOR_PAIR(colors[i]));
+            wmove(stdscr, 0, i*10*4);
             printw("  ( )");
-            printw("\t\t\t");
+            // printw("\t\t\t\t");
             attroff(COLOR_PAIR(colors[i]));
         }
         printw("\n");
         for(int i = 0 ; i < 5 ; i++){
             attron(COLOR_PAIR(colors[i]));
+            wmove(stdscr, 1, i*10*4);
             printw("  ) (");
-            printw("\t\t\t");
+            // printw("\t\t\t\t");
             attroff(COLOR_PAIR(colors[i]));
         }
         printw("\n");
         for(int i = 0 ; i < 5 ; i++){
             attron(COLOR_PAIR(colors[i]));
+            wmove(stdscr, 2, i*10*4);
             printw(" (   )");
-            printw("\t\t\t");
+            // printw("\t\t\t\t");
             attroff(COLOR_PAIR(colors[i]));
         }
         printw("\n");
         for(int i = 0 ; i < 5 ; i++){
             attron(COLOR_PAIR(colors[i]));
+            wmove(stdscr, 3, i*10*4);
             printw("[_____]");
-            printw("\t\t\t");
+            // printw("\t\t\t\t");
             attroff(COLOR_PAIR(colors[i]));
         }
         printw("\n");
         for(int i = 0 ; i < 5 ; i++){
+            wmove(stdscr, 4, i*10*4);
             printw("Joueur %d",i+1);
-            printw("\t\t");
+            // printw("\t\t\t");
         }
         printw("\n");
         for(int i = 0 ; i < 5 ; i++){
+            wmove(stdscr, 5, i*10*4);
             if(row == 0 && column == i) printw("[ ");
             attron(COLOR_PAIR(colors[i]));
             if(colors[i] == RED) printw("ROUGE");
@@ -226,16 +232,17 @@ void SelectPlayers(GameStruct game){
             attroff(COLOR_PAIR(colors[i]));
             if(row == 0 && column == i) printw(" ]");
 
-            printw("\t\t\t");
+            // printw("\t\t\t\t");
         }
         printw("\n");
         for(int i = 0 ; i < 5 ; i++){
-            if(row == 1 && column == i) printw("[");
+            wmove(stdscr, 6, i*10*4);
+            if(row == 1 && column == i) printw("[ ");
             if(roles[i] == 1) printw("Humain");
             else if(roles[i] == 0) printw("IA");
             else printw("- - -");
-            if(row == 1 && column == i) printw("]");
-            printw("\t\t\t");
+            if(row == 1 && column == i) printw(" ]");
+            // printw("\t\t\t\t");
         }
         printw("\n\n");
         if(row == 2) printw("[ ");
@@ -243,8 +250,8 @@ void SelectPlayers(GameStruct game){
         if(row == 2) printw(" ]");
 
         printw("\n\n\n");
-        printw("< > : Changer de joueur\t\t");
-        printw("^ v : Changer de ligne\t\t");
+        printw("< > : Changer de joueur\t\t\t");
+        printw("^ v : Changer de ligne\t\t\t");
         printw("ESPACE : Confirmer : %d", row);
 
         refresh();
