@@ -19,6 +19,7 @@
 #define YELLOW 3
 #define BLUE 4
 #define PINK 5
+#define CYAN 6
 
 // A REFAIRE POUR NCURSES
 #define ROUTE "\e[1;30m\e[103m"
@@ -83,6 +84,7 @@ void InitNcurses(){
     init_pair(YELLOW, COLOR_YELLOW, COLOR_BLACK);
     init_pair(BLUE, COLOR_BLUE, COLOR_BLACK);
     init_pair(PINK, COLOR_MAGENTA, COLOR_BLACK);
+    init_pair(CYAN, COLOR_CYAN, COLOR_BLACK);
 }
 
 // char * Couleur(char c){
@@ -126,6 +128,7 @@ void InitNcurses(){
 //     }
 // }
 
+// AFFICHAGE DE L'ECRAN TITRE
 void TitleScreen(){
     int ch;
     do{
@@ -144,26 +147,55 @@ void TitleScreen(){
     }while(1);
 }
 
-// A COMMENTER
+// SELECTION DES JOUEURS
 void SelectPlayers(GameStruct game){
-    int ch;
+    int ch; // caractère lu au clavier
     int row = 0, column = 0;
+    int nbPlayers = 2;
 
-    int colors[5] = {1,2,0,0,0};
-    int roles[5] = {1,0,-1,-1,-1};
+    int colors[5] = {1,2,0,0,0}; // liste des couleurs pour chaque joueur
+    int roles[5] = {1,0,-1,-1,-1}; // liste des "roles" pour chaque joueur (humain / ia)
+
+    // boucle while d'affichage et de gestion des touches lues au clavier
     do{
-        if(ch == ' ' && row == 2) break;
+        // si on est sur le CONFIRMER et que la touche espace est appuyée : break
+        if(ch == ' ' && row == 3) break;
 
+        // permet de changer de ligne avec les flèches haut et bas du clavier
         if(ch == KEY_UP && row > 0) row--;
-        if(ch == KEY_DOWN && row < 2) row++;
+        if(ch == KEY_DOWN && row < 3) row++;
+
+        // permet d'ajouter ou de retirer des joueurs avec les flèches gauches et droites du clavier lorsqu'on est sur la ligne 3
+        if(ch == KEY_LEFT && row == 2 && nbPlayers > 2){
+            colors[nbPlayers - 1] = 0;
+            roles[nbPlayers - 1] = -1;
+            nbPlayers--;
+        }
+        if(ch == KEY_RIGHT && row == 2 && nbPlayers < 5){
+            nbPlayers++;
+            colors[nbPlayers - 1]++;
+            int i = -1;
+            while(i < nbPlayers){
+                i++;
+                if(i != nbPlayers - 1){
+                    if(colors[nbPlayers - 1] == colors[i]){
+                        colors[nbPlayers - 1]++;
+                        i = -1;
+                        if(colors[nbPlayers - 1] > 6) colors[nbPlayers - 1] = 1;
+                    }
+                }
+            }
+        }
+
+        // permet de changer de joueur (colonne) avec les flèches gauche et droite du clavier
         if(ch == KEY_LEFT && column > 0) column--;
-        if(ch == KEY_RIGHT && column < 4) column++;
+        if(ch == KEY_RIGHT && column < nbPlayers - 1) column++;
 
         if(ch == ' '){
             if(row == 0){
                 colors[column]++;
                 int i = -1;
-                while(i < 5){
+                while(i < nbPlayers){
                     i++;
                     if(i != column){
                         if(colors[column] == colors[i]){
@@ -171,55 +203,52 @@ void SelectPlayers(GameStruct game){
                             i = -1;
                         }
                     }
+                    if(colors[column] > 6){
+                        colors[column] = 1;
+                        i = -1;
+                    }
                 }
-                if(colors[column] > 5) colors[column] = 0;
-            }
-            else{
+            } else if(row == 1){
                 roles[column]--;
-                if(roles[column] < -1) roles[column] = 1;
+                if(roles[column] < 0) roles[column] = 1;
             }
         }
 
         erase();
-        for(int i = 0 ; i < 5 ; i++){
+        for(int i = 0 ; i < nbPlayers ; i++){
             attron(COLOR_PAIR(colors[i]));
             wmove(stdscr, 0, i*10*4);
             printw("  ( )");
-            // printw("\t\t\t\t");
             attroff(COLOR_PAIR(colors[i]));
         }
-        printw("\n");
-        for(int i = 0 ; i < 5 ; i++){
+
+        for(int i = 0 ; i < nbPlayers ; i++){
             attron(COLOR_PAIR(colors[i]));
             wmove(stdscr, 1, i*10*4);
             printw("  ) (");
-            // printw("\t\t\t\t");
             attroff(COLOR_PAIR(colors[i]));
         }
-        printw("\n");
-        for(int i = 0 ; i < 5 ; i++){
+
+        for(int i = 0 ; i < nbPlayers ; i++){
             attron(COLOR_PAIR(colors[i]));
             wmove(stdscr, 2, i*10*4);
             printw(" (   )");
-            // printw("\t\t\t\t");
             attroff(COLOR_PAIR(colors[i]));
         }
-        printw("\n");
-        for(int i = 0 ; i < 5 ; i++){
+
+        for(int i = 0 ; i < nbPlayers ; i++){
             attron(COLOR_PAIR(colors[i]));
             wmove(stdscr, 3, i*10*4);
             printw("[_____]");
-            // printw("\t\t\t\t");
             attroff(COLOR_PAIR(colors[i]));
         }
-        printw("\n");
-        for(int i = 0 ; i < 5 ; i++){
+
+        for(int i = 0 ; i < nbPlayers ; i++){
             wmove(stdscr, 4, i*10*4);
             printw("Joueur %d",i+1);
-            // printw("\t\t\t");
         }
-        printw("\n");
-        for(int i = 0 ; i < 5 ; i++){
+
+        for(int i = 0 ; i < nbPlayers ; i++){
             wmove(stdscr, 5, i*10*4);
             if(row == 0 && column == i) printw("[ ");
             attron(COLOR_PAIR(colors[i]));
@@ -228,31 +257,34 @@ void SelectPlayers(GameStruct game){
             else if(colors[i] == YELLOW) printw("JAUNE");
             else if(colors[i] == BLUE) printw("BLEU");
             else if(colors[i] == PINK) printw("ROSE");
-            else printw("- - -");
+            else if(colors[i] == CYAN) printw("CYAN");
             attroff(COLOR_PAIR(colors[i]));
             if(row == 0 && column == i) printw(" ]");
-
-            // printw("\t\t\t\t");
         }
-        printw("\n");
-        for(int i = 0 ; i < 5 ; i++){
+
+        for(int i = 0 ; i < nbPlayers ; i++){
             wmove(stdscr, 6, i*10*4);
             if(row == 1 && column == i) printw("[ ");
             if(roles[i] == 1) printw("Humain");
-            else if(roles[i] == 0) printw("IA");
-            else printw("- - -");
+            else printw("IA");
             if(row == 1 && column == i) printw(" ]");
-            // printw("\t\t\t\t");
         }
         printw("\n\n");
-        if(row == 2) printw("[ ");
+
+        printw("Nombre de joueurs : ");
+        if(row == 2) printw("< ");
+        printw("%d",nbPlayers);
+        if(row == 2) printw(" >");
+        printw("\n\n");
+
+        if(row == 3) printw("[ ");
         printw("CONFIRMER");
-        if(row == 2) printw(" ]");
+        if(row == 3) printw(" ]");
 
         printw("\n\n\n");
         printw("< > : Changer de joueur\t\t\t");
         printw("^ v : Changer de ligne\t\t\t");
-        printw("ESPACE : Confirmer : %d", row);
+        printw("ESPACE : Confirmer\n");
 
         refresh();
         ch = getch();
