@@ -9,61 +9,85 @@
 #define BLASON 10
 #define ABBAYE 11
 
-void PrintTileDbg(TileStruct t){
-    // attron(COLOR_PAIR(ROUTE));
-    // printw("route\n");
-    // attroff(COLOR_PAIR(ROUTE));
+#define LIGNEMIN 6
+#define LIGNEMINTUILE 8
+#define COLONNEMINTUILE 4
 
-    // OUEST
-    attron(COLOR_PAIR(ROUTE));
-    wmove(stdscr, 1, 0);
-    printw(" %c ",t.cotes[3]);
+void SetColor(char side){
+    if(side == 'r'){
+        attron(COLOR_PAIR(ROUTE));
+    } else if(side == 'a'){
+        attron(COLOR_PAIR(ABBAYE));
+    } else if(side == 'b'){
+        attron(COLOR_PAIR(BLASON));
+    } else if(side == 'v'){
+        attron(COLOR_PAIR(VILLE));
+    } else{
+        attron(COLOR_PAIR(PRE));
+    }
+}
+
+void RemoveColor(){
     attroff(COLOR_PAIR(ROUTE));
-
-    // NORD
-    attron(COLOR_PAIR(ROUTE));
-    wmove(stdscr, 0, 3);
-    printw(" %c ",t.cotes[0]);
-    attroff(COLOR_PAIR(ROUTE));
-
-    // CENTRE
-    attron(COLOR_PAIR(ROUTE));
-    wmove(stdscr, 1, 3);
-    printw(" %c ",t.centre);
-    attroff(COLOR_PAIR(ROUTE));
-
-    // SUD
-    attron(COLOR_PAIR(PRE));
-    wmove(stdscr, 2, 3);
-    printw(" %c ",t.cotes[2]);
-    attroff(COLOR_PAIR(PRE));
-
-    // EST
-    attron(COLOR_PAIR(PRE));
-    wmove(stdscr, 1, 6);
-    printw(" %c ",t.cotes[1]);
+    attroff(COLOR_PAIR(ABBAYE));
+    attroff(COLOR_PAIR(BLASON));
+    attroff(COLOR_PAIR(VILLE));
     attroff(COLOR_PAIR(PRE));
 }
 
-// void SimplePrintTileDbg(TileStruct t){
-//     printf(" %s %s \n",Couleur(t.cotes[0]),RESET);
-//     printf("%s %s",Couleur(t.cotes[3]),RESET);
-//     printf("%s %s",Couleur(t.centre),RESET);
-//     printf("%s %s\n",Couleur(t.cotes[1]),RESET);
-//     printf(" %s %s \n",Couleur(t.cotes[2]),RESET);
-// }
+void PrintTileDbg(TileStruct t, int i, int j){
+    if(t.centre != '0'){
+        // OUEST
+        SetColor(t.cotes[3]);
+        wmove(stdscr, LIGNEMINTUILE+1+(j*3), COLONNEMINTUILE+(i*9));
+        printw(" %c ",t.cotes[3]);
+        RemoveColor();
 
-// void PrintGridDbg(TileStruct grid[DIMENSION_MAX][DIMENSION_MAX]){
-//     printf("\t");
-//     for(int i = 0 ; i < DIMENSION_MAX ; i++){
-//         printf("%d\t", i);
-//     }
-//     printf("\n");
-//     for(int y = 0 ; y < DIMENSION_MAX ; y++){
-//         printf("%d\t",y);
-//         for(int x = 0 ; x < DIMENSION_MAX ; x++){
-//             SimplePrintTileDbg(pile[0]);
-//         }
-//         printf("\n");
-//     }
-// }
+        // NORD
+        SetColor(t.cotes[0]);
+        wmove(stdscr, LIGNEMINTUILE+(j*3), COLONNEMINTUILE+3+(i*9));
+        printw(" %c ",t.cotes[0]);
+        RemoveColor();
+
+        // CENTRE
+        SetColor(t.centre);
+        wmove(stdscr, LIGNEMINTUILE+1+(j*3), COLONNEMINTUILE+3+(i*9));
+        printw(" %c ",t.centre);
+        RemoveColor();
+
+        // SUD
+        SetColor(t.cotes[2]);
+        wmove(stdscr, LIGNEMINTUILE+2+(j*3), COLONNEMINTUILE+3+(i*9));
+        printw(" %c ",t.cotes[2]);
+        RemoveColor();
+
+        // EST
+        SetColor(t.cotes[1]);
+        wmove(stdscr, LIGNEMINTUILE+1+(j*3), COLONNEMINTUILE+6+(i*9));
+        printw(" %c ",t.cotes[1]);
+        RemoveColor();
+    }
+}
+
+void PrintGridDbg(GameStruct game){
+    int coordXMin = -5;
+    int coordYMin = -5;
+
+    int longueur = 11;
+    int hauteur = 11;
+
+    for(int i = 0 ; i < longueur ; i++){
+        wmove(stdscr, LIGNEMIN, COLONNEMINTUILE+4+(i*9));
+        printw("%d",coordXMin+i);
+    }
+    for(int j = 0 ; j < hauteur ; j++){
+        wmove(stdscr, LIGNEMINTUILE+1+(j*3), 0);
+        printw("%d",coordYMin+j);
+    }
+
+    for(int i = 0 ; i < longueur; i++){
+        for(int j = 0; j < hauteur; j++){
+            PrintTileDbg(game.grid[coordXMin+i+71][coordYMin+j+71], i, j);
+        }
+    }
+}

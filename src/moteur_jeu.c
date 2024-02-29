@@ -8,9 +8,10 @@
 #include "lecteur_csv.h"
 
 // A faire : dispatcher dans plusieurs fichiers etc
-// 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
+// A faire : commenter chaque fonction etc
 
 //*************************************
+#define DIMENSION_MAX 143
 
 #define RED 1
 #define GREEN 2
@@ -41,9 +42,15 @@ GameStruct game;
 // TileStruct pile[72];
 TileStruct grid[DIMENSION_MAX][DIMENSION_MAX];
 
+//afficher la grille en dessous (je vais dormir)
+void PrintGameScreenDbg(GameStruct game, TileStruct t){
+    PrintPlayers(game);
+    PrintGridDbg(game, t);
+}
+
 int main(int argc, char * argv[])
 {
-    // parseur_csv("tuiles_base_simplifiees.csv", game.pile);
+    parseur_csv("tuiles_base_simplifiees.csv", game.pile);
 
     InitNcurses();
 
@@ -56,11 +63,20 @@ int main(int argc, char * argv[])
     game.playerList[4] = (PlayerStruct){0, 0, 0, 0, -1};
     game = SelectPlayers(game);
 
-    PrintPlayers(game);
-    getch();
-    erase();
+    // PrintPlayers(game);
+    // getch();
+    // erase();
     TileStruct t = {{'N','E','S','O'},'C'};
-    PrintTileDbg(t);
+    for(int i = 0 ; i < 143 ; i++){
+        for(int j = 0 ; j < 143 ; j++){
+            game.grid[i][j] = (TileStruct){{'0','0','0','0'},'0'};
+        }
+    }
+    game.grid[71][71] = game.pile[0];
+    erase();
+
+    // PrintGridDbg(game, t);
+    PrintGameScreenDbg(game,t);
     getch();
 
     endwin();
@@ -92,7 +108,7 @@ void InitNcurses(){
 void PrintPlayers(GameStruct game){
     for(int j = 0 ; j < game.nbPlayers ; j++){
         printw("+");
-        for(int i = 0 ; i < 18 ; i++){
+        for(int i = 0 ; i < 19 ; i++){
             printw("-");
         }
         printw("+");
@@ -105,15 +121,26 @@ void PrintPlayers(GameStruct game){
         attron(COLOR_PAIR(game.playerList[j].color));
         printw("Joueur : %d",j+1);
         attroff(COLOR_PAIR(game.playerList[j].color));
-        printw(" = %d", 999);
+        printw(" = %d", 9999);
         printw(" |");
 
         printw("\t\t\t");
     }
     printw("\n");
     for(int j = 0 ; j < game.nbPlayers ; j++){
+        printw("|   ");
+        for(int i = 0 ;  i < 7 ; i++){
+            attron(COLOR_PAIR(game.playerList[j].color));
+            printw("o ");
+            attroff(COLOR_PAIR(game.playerList[j].color));
+        }
+        printw("  |");
+        printw("\t\t\t");
+    }
+    printw("\n");
+    for(int j = 0 ; j < game.nbPlayers ; j++){
         printw("+");
-        for(int i = 0 ; i < 18 ; i++){
+        for(int i = 0 ; i < 19 ; i++){
             printw("-");
         }
         printw("+");
