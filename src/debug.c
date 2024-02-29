@@ -69,10 +69,7 @@ void PrintTileDbg(TileStruct t, int i, int j){
     }
 }
 
-void PrintGridDbg(GameStruct game){
-    int coordXMin = -5;
-    int coordYMin = -5;
-
+void PrintGridDbg(GameStruct game, int coordXMin, int coordYMin){
     int longueur = 11;
     int hauteur = 11;
 

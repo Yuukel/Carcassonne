@@ -3,6 +3,6 @@
 
 void PrintTileDbg(TileStruct t);
 void SimplePrintTileDbg(TileStruct t);
-void PrintGridDbg(GameStruct game, TileStruct t);
+void PrintGridDbg(GameStruct game, int coordXMin, int coordYMin);
 
 #endif // DEBUG

@@ -43,9 +43,24 @@ GameStruct game;
 TileStruct grid[DIMENSION_MAX][DIMENSION_MAX];
 
 //afficher la grille en dessous (je vais dormir)
-void PrintGameScreenDbg(GameStruct game, TileStruct t){
-    PrintPlayers(game);
-    PrintGridDbg(game, t);
+void PrintGameScreenDbg(GameStruct game){
+    int coordXMin = -5;
+    int coordYMin = -5;
+    int ch;
+    do{
+        erase();
+        PrintPlayers(game);
+        PrintGridDbg(game,coordXMin,coordYMin);
+
+        ch = getch();
+        if(ch == ' ') break;
+
+        // Déplacement de la caméra du plateau
+        if(ch == KEY_UP && coordYMin > -71) coordYMin--;
+        if(ch == KEY_DOWN && coordYMin < 61) coordYMin++;
+        if(ch == KEY_LEFT && coordXMin > -71) coordXMin--;
+        if(ch == KEY_RIGHT && coordXMin < 61) coordXMin++;
+    }while(1);
 }
 
 int main(int argc, char * argv[])
@@ -63,9 +78,6 @@ int main(int argc, char * argv[])
     game.playerList[4] = (PlayerStruct){0, 0, 0, 0, -1};
     game = SelectPlayers(game);
 
-    // PrintPlayers(game);
-    // getch();
-    // erase();
     TileStruct t = {{'N','E','S','O'},'C'};
     for(int i = 0 ; i < 143 ; i++){
         for(int j = 0 ; j < 143 ; j++){
@@ -75,9 +87,7 @@ int main(int argc, char * argv[])
     game.grid[71][71] = game.pile[0];
     erase();
 
-    // PrintGridDbg(game, t);
-    PrintGameScreenDbg(game,t);
-    getch();
+    PrintGameScreenDbg(game);
 
     endwin();
     return 0;
