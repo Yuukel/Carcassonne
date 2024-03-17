@@ -25,6 +25,7 @@
 #define VILLE 9
 #define BLASON 10
 #define ABBAYE 11
+#define FIN 12
 
 //*************************************
 
@@ -47,10 +48,13 @@ void PrintGameScreenDbg(GameStruct game){
     int coordXMin = -5;
     int coordYMin = -5;
     int ch;
+    game.turn.currentPlayer = game.playerList[0];
+    game.turn.currentTile = game.pile[1];
     do{
         erase();
         PrintPlayers(game);
         PrintGridDbg(game,coordXMin,coordYMin);
+        PrintCurrentTileDbg(game);
 
         ch = getch();
         if(ch == ' ') break;
@@ -85,6 +89,7 @@ int main(int argc, char * argv[])
         }
     }
     game.grid[71][71] = game.pile[0];
+    game.grid[73][71] = game.pile[71-5];
     erase();
 
     PrintGameScreenDbg(game);
@@ -93,10 +98,12 @@ int main(int argc, char * argv[])
     return 0;
 }
 
+// A commenter
 void InitNcurses(){
     initscr();
     cbreak();
     noecho();
+    curs_set(0);
     keypad(stdscr, TRUE);
 
     start_color();
@@ -113,6 +120,7 @@ void InitNcurses(){
     init_pair(VILLE, COLOR_BLACK, COLOR_CYAN);
     init_pair(BLASON, COLOR_BLACK, COLOR_BLUE);
     init_pair(ABBAYE, COLOR_BLACK, COLOR_RED);
+    init_pair(FIN, COLOR_BLACK, COLOR_WHITE);
 }
 
 void PrintPlayers(GameStruct game){

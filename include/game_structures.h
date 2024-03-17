@@ -2,7 +2,8 @@
 #define GAME_STRUCTURES
 
 enum State {Draw, Tile, Pawn, End}; // Etats du jeu
-enum Type {Pre, Route, Ville, Blason, Abbaye, Fin}; //Check les traductions
+enum Type {Pre, Route, Ville, Blason, Abbaye, Fin};
+enum Mode {Camera, Rotation, Pose}; // Mode dans le jeu (State.Tile)
 
 typedef struct{
     char cotes[4];
@@ -18,16 +19,18 @@ typedef struct{
 } PlayerStruct;
 
 typedef struct{
+    PlayerStruct currentPlayer;
+    TileStruct currentTile;
+    enum State currentState;
+    enum Mode currentMode;
+} TurnStruct;
+
+typedef struct{
     int nbPlayers;
     PlayerStruct playerList[5];
     TileStruct pile[72];
     TileStruct grid[143][143];
+    TurnStruct turn;
 } GameStruct;
-
-typedef struct{
-    PlayerStruct currentPlayer;
-    TileStruct currentTile;
-    enum State currentState;
-} TurnStruct;
 
 #endif // GAME_STRUCTURES
