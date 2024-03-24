@@ -15,7 +15,6 @@ void parseur_csv(char * fileName, TileStruct * pile)
         nb = 0;
         char * value = strtok(temp,", ");
         while(value != NULL){
-            printf("%s\n",value);
             if(value[4] == 'a'){ // village
                 if(nb < 4) tile.cotes[nb] = 'f';
                 else tile.centre = 'f';
@@ -27,6 +26,7 @@ void parseur_csv(char * fileName, TileStruct * pile)
             nb++;
             value = strtok(NULL,", ");
         }
+        tile.tileType = 1;
         pile[index] = tile;
         index++;
     }

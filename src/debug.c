@@ -10,6 +10,7 @@
 #define BLASON 10
 #define ABBAYE 11
 #define FIN 12
+#define PLACEMENT 13
 
 #define LIGNEMIN 6
 #define LIGNEMINTUILE 8
@@ -26,8 +27,10 @@ void SetColor(char side){
         attron(COLOR_PAIR(VILLE));
     } else if(side == 'p'){
         attron(COLOR_PAIR(PRE));
-    } else{
+    } else if(side == 'f'){
         attron(COLOR_PAIR(FIN));
+    } else{
+        attron(COLOR_PAIR(PLACEMENT));
     }
 }
 
@@ -38,10 +41,11 @@ void RemoveColor(){
     attroff(COLOR_PAIR(VILLE));
     attroff(COLOR_PAIR(PRE));
     attroff(COLOR_PAIR(FIN));
+    attroff(COLOR_PAIR(PLACEMENT));
 }
 
 void PrintTileDbg(TileStruct t, int i, int j){
-    if(t.centre != '0'){
+    if(t.tileType != 0){
         // OUEST
         SetColor(t.cotes[3]);
         wmove(stdscr, LIGNEMINTUILE+1+(j*3), COLONNEMINTUILE+(i*9));
@@ -123,7 +127,7 @@ void PrintCurrentTileDbg(GameStruct game){
     printw("+");
 
     // Affichage de la tuile actuelle
-    if(game.turn.currentTile.centre != '0'){
+    if(game.turn.currentTile.tileType != 0){
         // OUEST
         SetColor(game.turn.currentTile.cotes[3]);
         wmove(stdscr, LIGNEMIN+5, 136+1);
@@ -189,4 +193,55 @@ void PrintCurrentTileDbg(GameStruct game){
         printw("-");
     }
     printw("+");
+}
+
+GameStruct CanBePlaced(GameStruct game){
+    for(int i = 0 ; i < 143 ; i++){
+        for(int j = 0 ; j < 143 ; j++){
+            if(game.grid[i][j].tileType == 0) continue;
+            // faire les coins
+
+            //NORD
+            if(game.grid[i][j-1].tileType == 0){
+                if(game.grid[i][j].cotes[0] == game.turn.currentTile.cotes[2]){
+                    game.grid[i][j-1] = (TileStruct){{'0','0','0','0'},'0',2};
+                }
+                else{
+                    game.grid[i][j-1] = (TileStruct){{'0','0','0','0'},'0',1};
+                }
+            }
+
+            //SUD
+            if(game.grid[i][j+1].tileType == 0){
+                if(game.grid[i][j].cotes[2] == game.turn.currentTile.cotes[0]){
+                    game.grid[i][j+1] = (TileStruct){{'0','0','0','0'},'0',2};
+                }
+                else{
+                    game.grid[i][j+1] = (TileStruct){{'0','0','0','0'},'0',1};
+                }
+            }
+
+            //EST
+            if(game.grid[i+1][j].tileType == 0){
+                if(game.grid[i][j].cotes[1] == game.turn.currentTile.cotes[3]){
+                    game.grid[i+1][j] = (TileStruct){{'0','0','0','0'},'0',2};
+                }
+                else{
+                    game.grid[i+1][j] = (TileStruct){{'0','0','0','0'},'0',1};
+                }
+            }
+
+            //OUEST
+            if(game.grid[i-1][j].tileType == 0){
+                if(game.grid[i][j].cotes[3] == game.turn.currentTile.cotes[1]){
+                    game.grid[i-1][j] = (TileStruct){{'0','0','0','0'},'0',2};
+                }
+                else{
+                    game.grid[i-1][j] = (TileStruct){{'0','0','0','0'},'0',1};
+                }
+            }
+        }
+    }
+
+    return game;
 }

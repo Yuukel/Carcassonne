@@ -8,6 +8,7 @@ enum Mode {Camera, Rotation, Pose}; // Mode dans le jeu (State.Tile)
 typedef struct{
     char cotes[4];
     char centre;
+    int tileType;
 } TileStruct;
 
 typedef struct{

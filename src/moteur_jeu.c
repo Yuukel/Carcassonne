@@ -26,6 +26,7 @@
 #define BLASON 10
 #define ABBAYE 11
 #define FIN 12
+#define PLACEMENT 13
 
 //*************************************
 
@@ -53,6 +54,7 @@ void PrintGameScreenDbg(GameStruct game){
     do{
         erase();
         PrintPlayers(game);
+        game = CanBePlaced(game);
         PrintGridDbg(game,coordXMin,coordYMin);
         PrintCurrentTileDbg(game);
 
@@ -60,10 +62,13 @@ void PrintGameScreenDbg(GameStruct game){
         if(ch == ' ') break;
 
         // Déplacement de la caméra du plateau
-        if(ch == KEY_UP && coordYMin > -71) coordYMin--;
-        if(ch == KEY_DOWN && coordYMin < 61) coordYMin++;
-        if(ch == KEY_LEFT && coordXMin > -71) coordXMin--;
-        if(ch == KEY_RIGHT && coordXMin < 61) coordXMin++;
+        // if(ch == KEY_UP && coordYMin > -71) coordYMin--;
+        // if(ch == KEY_DOWN && coordYMin < 61) coordYMin++;
+        // if(ch == KEY_LEFT && coordXMin > -71) coordXMin--;
+        // if(ch == KEY_RIGHT && coordXMin < 61) coordXMin++;
+
+        if(ch == KEY_RIGHT) game.turn.currentTile = RotateTile(game.turn.currentTile, 1);
+        if(ch == KEY_LEFT) game.turn.currentTile = RotateTile(game.turn.currentTile, -1);
     }while(1);
 }
 
@@ -82,10 +87,9 @@ int main(int argc, char * argv[])
     game.playerList[4] = (PlayerStruct){0, 0, 0, 0, -1};
     game = SelectPlayers(game);
 
-    TileStruct t = {{'N','E','S','O'},'C'};
     for(int i = 0 ; i < 143 ; i++){
         for(int j = 0 ; j < 143 ; j++){
-            game.grid[i][j] = (TileStruct){{'0','0','0','0'},'0'};
+            game.grid[i][j] = (TileStruct){{'0','0','0','0'},'0',0};
         }
     }
     game.grid[71][71] = game.pile[0];
@@ -121,6 +125,7 @@ void InitNcurses(){
     init_pair(BLASON, COLOR_BLACK, COLOR_BLUE);
     init_pair(ABBAYE, COLOR_BLACK, COLOR_RED);
     init_pair(FIN, COLOR_BLACK, COLOR_WHITE);
+    init_pair(PLACEMENT, COLOR_BLACK, COLOR_WHITE);
 }
 
 void PrintPlayers(GameStruct game){
