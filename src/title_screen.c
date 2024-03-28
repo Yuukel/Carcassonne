@@ -1,14 +1,15 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include <ncurses.h>
-#include "game_structures.h"
 
+#include "title_screen.h"
+
+/********************/
 #define RED 1
 #define GREEN 2
 #define YELLOW 3
 #define BLUE 4
 #define PINK 5
 #define CYAN 6
+/********************/
 
 // AFFICHAGE DE L'ECRAN TITRE
 void TitleScreen(){

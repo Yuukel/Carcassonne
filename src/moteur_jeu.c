@@ -3,9 +3,10 @@
 #include <ncurses.h>
 
 #include "game_structures.h"
-#include "debug.h"
 #include "title_screen.h"
-#include "lecteur_csv.h"
+#include "start_functions.h"
+#include "print_functions.h"
+#include "tile_functions.h"
 
 // A faire : dispatcher dans plusieurs fichiers etc
 // A faire : commenter chaque fonction etc
@@ -33,42 +34,23 @@
 // Fonctions pour ncurses
 void InitNcurses();
 
-// Fonctions d'affichage
-void PrintPlayers(GameStruct game);
-
-// Fonctions de tuiles
-TileStruct RotateTile(TileStruct t, int sens);
-void Tour();
-
 GameStruct game;
-// TileStruct pile[72];
 TileStruct grid[DIMENSION_MAX][DIMENSION_MAX];
 
 //afficher la grille en dessous (je vais dormir)
 void PrintGameScreenDbg(GameStruct game){
     int coordXMin = -5;
     int coordYMin = -5;
-    int ch;
     game.turn.currentPlayer = game.playerList[0];
     game.turn.currentTile = game.pile[1];
     do{
         erase();
         PrintPlayers(game);
-        game = CanBePlaced(game);
-        PrintGridDbg(game,coordXMin,coordYMin);
-        PrintCurrentTileDbg(game);
+        // game = CanBePlaced(game);
+        PrintGrid(game,coordXMin,coordYMin);
+        PrintTurnInfos(game);
 
-        ch = getch();
-        if(ch == ' ') break;
-
-        // Déplacement de la caméra du plateau
-        // if(ch == KEY_UP && coordYMin > -71) coordYMin--;
-        // if(ch == KEY_DOWN && coordYMin < 61) coordYMin++;
-        // if(ch == KEY_LEFT && coordXMin > -71) coordXMin--;
-        // if(ch == KEY_RIGHT && coordXMin < 61) coordXMin++;
-
-        if(ch == KEY_RIGHT) game.turn.currentTile = RotateTile(game.turn.currentTile, 1);
-        if(ch == KEY_LEFT) game.turn.currentTile = RotateTile(game.turn.currentTile, -1);
+        if(WaitingForAction() == 1) break;
     }while(1);
 }
 
@@ -127,79 +109,3 @@ void InitNcurses(){
     init_pair(FIN, COLOR_BLACK, COLOR_WHITE);
     init_pair(PLACEMENT, COLOR_BLACK, COLOR_WHITE);
 }
-
-void PrintPlayers(GameStruct game){
-    for(int j = 0 ; j < game.nbPlayers ; j++){
-        printw("+");
-        for(int i = 0 ; i < 19 ; i++){
-            printw("-");
-        }
-        printw("+");
-
-        printw("\t\t\t");
-    }
-    printw("\n");
-    for(int j = 0 ; j < game.nbPlayers ; j++){
-        printw("| ");
-        attron(COLOR_PAIR(game.playerList[j].color));
-        printw("Joueur : %d",j+1);
-        attroff(COLOR_PAIR(game.playerList[j].color));
-        printw(" = %d", 9999);
-        printw(" |");
-
-        printw("\t\t\t");
-    }
-    printw("\n");
-    for(int j = 0 ; j < game.nbPlayers ; j++){
-        printw("|   ");
-        for(int i = 0 ;  i < 7 ; i++){
-            attron(COLOR_PAIR(game.playerList[j].color));
-            printw("o ");
-            attroff(COLOR_PAIR(game.playerList[j].color));
-        }
-        printw("  |");
-        printw("\t\t\t");
-    }
-    printw("\n");
-    for(int j = 0 ; j < game.nbPlayers ; j++){
-        printw("+");
-        for(int i = 0 ; i < 19 ; i++){
-            printw("-");
-        }
-        printw("+");
-
-        printw("\t\t\t");
-    }
-    printw("\n\n");
-    refresh();
-}
-
-TileStruct RotateTile(TileStruct t, int sens){
-    char temp; 
-    if(sens > 0){
-        temp = t.cotes[3];
-        t.cotes[3] = t.cotes[2];
-        t.cotes[2] = t.cotes[1];
-        t.cotes[1] = t.cotes[0];
-        t.cotes[0] = temp;
-    }
-    else if(sens < 0){
-        temp = t.cotes[0];
-        t.cotes[0] = t.cotes[1];
-        t.cotes[1] = t.cotes[2];
-        t.cotes[2] = t.cotes[3];
-        t.cotes[3] = temp;
-    }
-
-    return t;
-}
-
-// void Tour(){
-//     int choice;
-//     PrintTileDbg(pile[1]);
-//     while(scanf("%d",&choice) != 0){
-//         pile[1] = RotateTile(pile[1], choice);
-//         system("clear");
-//         PrintTileDbg(pile[1]);
-//     }
-// }

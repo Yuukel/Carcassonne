@@ -1,20 +1,7 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <ncurses.h>
-#include "game_structures.h"
+#include <string.h>
 
-#define ROUTE 7
-#define PRE 8
-#define VILLE 9
-#define BLASON 10
-#define ABBAYE 11
-#define FIN 12
-#define PLACEMENT 13
-
-#define LIGNEMIN 6
-#define LIGNEMINTUILE 8
-#define COLONNEMINTUILE 4
+#include "print_functions.h"
 
 void SetColor(char side){
     if(side == 'r'){
@@ -44,7 +31,53 @@ void RemoveColor(){
     attroff(COLOR_PAIR(PLACEMENT));
 }
 
-void PrintTileDbg(TileStruct t, int i, int j){
+void PrintPlayers(GameStruct game){
+    for(int j = 0 ; j < game.nbPlayers ; j++){
+        printw("+");
+        for(int i = 0 ; i < 19 ; i++){
+            printw("-");
+        }
+        printw("+");
+
+        printw("\t\t\t");
+    }
+    printw("\n");
+    for(int j = 0 ; j < game.nbPlayers ; j++){
+        printw("| ");
+        attron(COLOR_PAIR(game.playerList[j].color));
+        printw("Joueur : %d",j+1);
+        attroff(COLOR_PAIR(game.playerList[j].color));
+        printw(" = %d", 9999);
+        printw(" |");
+
+        printw("\t\t\t");
+    }
+    printw("\n");
+    for(int j = 0 ; j < game.nbPlayers ; j++){
+        printw("|   ");
+        for(int i = 0 ;  i < 7 ; i++){
+            attron(COLOR_PAIR(game.playerList[j].color));
+            printw("o ");
+            attroff(COLOR_PAIR(game.playerList[j].color));
+        }
+        printw("  |");
+        printw("\t\t\t");
+    }
+    printw("\n");
+    for(int j = 0 ; j < game.nbPlayers ; j++){
+        printw("+");
+        for(int i = 0 ; i < 19 ; i++){
+            printw("-");
+        }
+        printw("+");
+
+        printw("\t\t\t");
+    }
+    printw("\n\n");
+    refresh();
+}
+
+void PrintTile(TileStruct t, int i, int j){
     if(t.tileType != 0){
         // OUEST
         SetColor(t.cotes[3]);
@@ -78,7 +111,7 @@ void PrintTileDbg(TileStruct t, int i, int j){
     }
 }
 
-void PrintGridDbg(GameStruct game, int coordXMin, int coordYMin){
+void PrintGrid(GameStruct game, int coordXMin, int coordYMin){
     int longueur = 11;
     int hauteur = 11;
 
@@ -93,7 +126,7 @@ void PrintGridDbg(GameStruct game, int coordXMin, int coordYMin){
 
     for(int i = 0 ; i < longueur; i++){
         for(int j = 0; j < hauteur; j++){
-            PrintTileDbg(game.grid[coordXMin+i+71][coordYMin+j+71], i, j);
+            PrintTile(game.grid[coordXMin+i+71][coordYMin+j+71], i, j);
         }
     }
 }
@@ -104,7 +137,7 @@ char * CurrentMode(GameStruct game){
     else return "Pose";
 }
 
-void PrintCurrentTileDbg(GameStruct game){
+void PrintTurnInfos(GameStruct game){
     // Affichage du "panneau" joueur
     wmove(stdscr, LIGNEMIN, 130);
     printw("+");
@@ -195,54 +228,4 @@ void PrintCurrentTileDbg(GameStruct game){
     printw("+");
 }
 
-// DEBUG CETTE FONCTION
-GameStruct CanBePlaced(GameStruct game){
-    for(int x = 0 ; x < 143 ; x++){
-        for(int y = 0 ; y < 143 ; y++){
-            if(game.grid[x][y].tileType == 1) continue;
-            // faire les coins
-
-            //NORD
-            if(game.grid[x][y-1].tileType == 0){
-                if(game.grid[x][y].cotes[0] == game.turn.currentTile.cotes[2]){
-                    game.grid[x][y-1].tileType = 2;
-                }
-                // else{
-                //     // game.grid[i][j-1].tileType = 0;
-                // }
-            }
-
-            //SUD
-            if(game.grid[x][y+1].tileType == 0){
-                if(game.grid[x][y].cotes[2] == game.turn.currentTile.cotes[0]){
-                    game.grid[x][y+1].tileType = 2;
-                }
-                // else{
-                //     // game.grid[i][j+1].tileType = 0;
-                // }
-            }
-
-            //EST
-            if(game.grid[x+1][y].tileType == 0){
-                if(game.grid[x][y].cotes[1] == game.turn.currentTile.cotes[3]){
-                    game.grid[x+1][y].tileType = 2;
-                }
-                // else{
-                //     // game.grid[i+1][j].tileType = 0;
-                // }
-            }
-
-            //OUEST
-            if(game.grid[x-1][y].tileType == 0){
-                if(game.grid[x][y].cotes[3] == game.turn.currentTile.cotes[1]){
-                    game.grid[x-1][y].tileType = 2;
-                }
-                // else{
-                //     // game.grid[i-1][j].tileType = 0;
-                // }
-            }
-        }
-    }
-
-    return game;
-}
+// affichage des commandes
