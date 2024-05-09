@@ -28,6 +28,10 @@ typedef struct{
 } TileStruct;
 
 typedef struct{
+    int x, y;
+} CoordStruct;
+
+typedef struct{
     int id;
     int color;
 	int score;
@@ -40,6 +44,9 @@ typedef struct{
     TileStruct currentTile;
     enum State currentState;
     enum Mode currentMode;
+    int coordYMin;
+    int coordXMin;
+    int tileIndex;
 } TurnStruct;
 
 typedef struct{

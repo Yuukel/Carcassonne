@@ -39,18 +39,22 @@ TileStruct grid[DIMENSION_MAX][DIMENSION_MAX];
 
 //afficher la grille en dessous (je vais dormir)
 void PrintGameScreenDbg(GameStruct game){
-    int coordXMin = -5;
-    int coordYMin = -5;
+    game.turn.coordXMin = -5;
+    game.turn.coordYMin = -5;
     game.turn.currentPlayer = game.playerList[0];
     game.turn.currentTile = game.pile[1];
+    game.turn.tileIndex = 0;
+    // game.turn.currentTile = (TileStruct){{'v','v','v','v'},'v',1};
     do{
         erase();
         PrintPlayers(game);
-        // game = CanBePlaced(game);
-        PrintGrid(game,coordXMin,coordYMin);
-        PrintTurnInfos(game);
+        game = CanBePlaced(game);
+        game = ChangeNumbers(game);
+        PrintGrid(game,game.turn.coordXMin,game.turn.coordYMin);
+        PrintTurnInfos(game.turn);
+        PrintCommands(game.turn);
 
-        if(WaitingForAction() == 1) break;
+        game = WaitingForAction(game);
     }while(1);
 }
 
@@ -74,8 +78,8 @@ int main(int argc, char * argv[])
             game.grid[i][j] = (TileStruct){{'0','0','0','0'},'0',0};
         }
     }
-    game.grid[71][71] = game.pile[0];
-    game.grid[73][71] = game.pile[71-5];
+    game.grid[71][71] = game.pile[0]; // tuile de départ en (0 ; 0)
+    game.grid[73][71] = game.pile[71-5]; // 2e tuile pour exemple
     erase();
 
     PrintGameScreenDbg(game);

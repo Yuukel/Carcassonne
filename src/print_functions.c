@@ -131,13 +131,13 @@ void PrintGrid(GameStruct game, int coordXMin, int coordYMin){
     }
 }
 
-char * CurrentMode(GameStruct game){
-    if(game.turn.currentMode == Rotation) return "Rotation";
-    else if(game.turn.currentMode == Camera) return "Camera";
+char * CurrentMode(TurnStruct turn){
+    if(turn.currentMode == Rotation) return "Rotation";
+    else if(turn.currentMode == Camera) return "Camera";
     else return "Pose";
 }
 
-void PrintTurnInfos(GameStruct game){
+void PrintTurnInfos(TurnStruct turn){
     // Affichage du "panneau" joueur
     wmove(stdscr, LIGNEMIN, 130);
     printw("+");
@@ -147,9 +147,9 @@ void PrintTurnInfos(GameStruct game){
     printw("+");
     wmove(stdscr, LIGNEMIN+1, 130);
     printw("|     ");
-    attron(COLOR_PAIR(game.turn.currentPlayer.color));
-    printw("Joueur : %d", game.turn.currentPlayer.id);
-    attroff(COLOR_PAIR(game.turn.currentPlayer.color));
+    attron(COLOR_PAIR(turn.currentPlayer.color));
+    printw("Joueur : %d", turn.currentPlayer.id);
+    attroff(COLOR_PAIR(turn.currentPlayer.color));
 
     printw("      |");
     wmove(stdscr, LIGNEMIN+2, 130);
@@ -160,35 +160,35 @@ void PrintTurnInfos(GameStruct game){
     printw("+");
 
     // Affichage de la tuile actuelle
-    if(game.turn.currentTile.tileType != 0){
+    if(turn.currentTile.tileType != 0){
         // OUEST
-        SetColor(game.turn.currentTile.cotes[3]);
+        SetColor(turn.currentTile.cotes[3]);
         wmove(stdscr, LIGNEMIN+5, 136+1);
-        printw(" %c ",game.turn.currentTile.cotes[3]);
+        printw(" %c ",turn.currentTile.cotes[3]);
         RemoveColor();
 
         // NORD
-        SetColor(game.turn.currentTile.cotes[0]);
+        SetColor(turn.currentTile.cotes[0]);
         wmove(stdscr, LIGNEMIN+4, 136+4);
-        printw(" %c ",game.turn.currentTile.cotes[0]);
+        printw(" %c ",turn.currentTile.cotes[0]);
         RemoveColor();
 
         // CENTRE
-        SetColor(game.turn.currentTile.centre);
+        SetColor(turn.currentTile.centre);
         wmove(stdscr, LIGNEMIN+5, 136+4);
-        printw(" %c ",game.turn.currentTile.centre);
+        printw(" %c ",turn.currentTile.centre);
         RemoveColor();
 
         // SUD
-        SetColor(game.turn.currentTile.cotes[2]);
+        SetColor(turn.currentTile.cotes[2]);
         wmove(stdscr, LIGNEMIN+6, 136+4);
-        printw(" %c ",game.turn.currentTile.cotes[2]);
+        printw(" %c ",turn.currentTile.cotes[2]);
         RemoveColor();
 
         // EST
-        SetColor(game.turn.currentTile.cotes[1]);
+        SetColor(turn.currentTile.cotes[1]);
         wmove(stdscr, LIGNEMIN+5, 136+7);
-        printw(" %c ",game.turn.currentTile.cotes[1]);
+        printw(" %c ",turn.currentTile.cotes[1]);
         RemoveColor();
     }
 
@@ -200,7 +200,7 @@ void PrintTurnInfos(GameStruct game){
     }
 
     // Affichage du "panneau" mode
-    game.turn.currentMode = Rotation;
+    // turn.currentMode = Rotation;
     wmove(stdscr, LIGNEMIN+8, 130);
     printw("+");
     for(int i = 0 ; i < 21 ; i++){
@@ -209,13 +209,13 @@ void PrintTurnInfos(GameStruct game){
     printw("+");
     wmove(stdscr, LIGNEMIN+9, 130);
     printw("|");
-    char * currentMode = CurrentMode(game);
+    char * currentMode = CurrentMode(turn);
     for(int i = 0 ; i < 7 - 0.5*strlen(currentMode) ; i++){
         printw(" ");
     }
-    attron(COLOR_PAIR(game.turn.currentPlayer.color));
+    attron(COLOR_PAIR(turn.currentPlayer.color));
     printw("Mode : %s", currentMode);
-    attroff(COLOR_PAIR(game.turn.currentPlayer.color));
+    attroff(COLOR_PAIR(turn.currentPlayer.color));
     for(int i = 0 ; i < 7 - 0.5*strlen(currentMode) ; i++){
         printw(" ");
     }
@@ -229,3 +229,50 @@ void PrintTurnInfos(GameStruct game){
 }
 
 // affichage des commandes
+void PrintCommands(TurnStruct turn){
+    wmove(stdscr, 42, 0);
+    printw("C : Changer le mode en \"Camera\"     R : Changer le mode en \"Rotation\"      P : Changer le mode en \"Pose\"");
+    wmove(stdscr, 43, 0);
+    if(turn.currentMode == Rotation) printw("< : Tourne la tuile vers la gauche     > : Tourne la tuile vers la droite");
+    else if(turn.currentMode == Camera) printw("< ^ v > : Deplacer la camera dans le sens voulu");
+    else if(turn.currentMode == Pose) printw("%d", turn.tileIndex);
+}
+
+GameStruct ResetCanBePlaced(GameStruct game){
+    for(int x = 0 ; x < 143 ; x++){
+        for(int y = 0 ; y < 143 ; y++){
+            if(game.grid[x][y].tileType == 2){
+                game.grid[x][y].tileType = 0;
+            }
+        }
+    }
+
+    return game;
+}
+
+GameStruct CanBePlaced(GameStruct game){
+    game = ResetCanBePlaced(game);
+    for(int x = 0 ; x < 143 ; x++){
+        for(int y = 0 ; y < 143 ; y++){
+            if(game.grid[x][y].tileType == 0){
+                if(
+                    (game.grid[x][y-1].tileType == 1) ||
+                    (game.grid[x][y+1].tileType == 1) ||
+                    (game.grid[x-1][y].tileType == 1) ||
+                    (game.grid[x+1][y].tileType == 1)
+                ){
+                    if(
+                        ((game.grid[x][y-1].tileType == 0) || (game.grid[x][y-1].cotes[2] == game.turn.currentTile.cotes[0])) && 
+                        ((game.grid[x][y+1].tileType == 0) || (game.grid[x][y+1].cotes[0] == game.turn.currentTile.cotes[2])) &&
+                        ((game.grid[x-1][y].tileType == 0) || (game.grid[x-1][y].cotes[1] == game.turn.currentTile.cotes[3])) &&
+                        ((game.grid[x+1][y].tileType == 0) || (game.grid[x+1][y].cotes[3] == game.turn.currentTile.cotes[1]))
+                    ){
+                        game.grid[x][y].tileType = 2;
+                    }
+                }
+            }
+        }
+    }
+
+    return game;
+}

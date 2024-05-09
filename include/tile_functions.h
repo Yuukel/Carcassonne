@@ -4,9 +4,11 @@
 #include <ncurses.h>
 #include "game_structures.h"
 
-int WaitingForAction();
-int MoveCamera();
-TileStruct RotateTile(TileStruct t, int sens);
-// pose tuile
+GameStruct WaitingForAction(GameStruct game);
+TurnStruct MoveCamera(TurnStruct turn, int ch);
+TileStruct RotateTile(TileStruct t, int ch);
+GameStruct PlaceTile(GameStruct game, int ch);
+void ReturnCoordsList(GameStruct game, CoordStruct * coords);
+GameStruct ChangeNumbers(GameStruct game);
 
 #endif // TILE
