@@ -6,4 +6,4 @@
 void TitleScreen();
 GameStruct SelectPlayers(GameStruct game);
 
-#endif // TITLE_SCREEN
+#endif  // TITLE_SCREEN

@@ -12,13 +12,18 @@ void SetColor(char side);
 void RemoveColor();
 
 // fonctions d'affichage
-void PrintPlayers(GameStruct game); // affiche les joueurs et leurs infos
-void PrintTile(TileStruct t, int i, int j); // permet d'afficher une tuile
-void PrintGrid(GameStruct game, int coordXMin, int coordYMin); // affichage la grille avec les tuiles
-char * CurrentMode(TurnStruct turn); // permet de retourner le mode actuel
-void PrintTurnInfos(TurnStruct turn); // affiche les infos actuelle du tour
-void PrintCommands(TurnStruct turn); // affichage des commandes
-GameStruct ResetCanBePlaced(GameStruct game); // reset des emplacements de tuiles posables
-GameStruct CanBePlaced(GameStruct game); // affichage des emplacements de tuiles posables
+void PrintPlayers(GameStruct game);  // affiche les joueurs et leurs infos
+void PrintTile(TileStruct t, int i, int j, PawnStruct pawns[26], int x,
+               int y);  // permet d'afficher une tuile
+void PrintGrid(GameStruct game, int coordXMin,
+               int coordYMin);         // affichage la grille avec les tuiles
+char* CurrentMode(TurnStruct turn);    // permet de retourner le mode actuel
+void PrintTurnInfos(TurnStruct turn);  // affiche les infos actuelle du tour
+void PrintCommands(TurnStruct turn,
+                   GameStruct game);  // affichage des commandes
+GameStruct ResetCanBePlaced(
+    GameStruct game);  // reset des emplacements de tuiles posables
+GameStruct CanBePlaced(
+    GameStruct game);  // affichage des emplacements de tuiles posables
 
-#endif // PRINT
+#endif  // PRINT

@@ -17,44 +17,67 @@
 #define FIN 12
 #define PLACEMENT 13
 
-enum State {Draw, Tile, Pawn, End}; // Etats du jeu
-// enum Type {Pre, Route, Ville, Blason, Abbaye, Fin};
-enum Mode {Camera, Rotation, Pose}; // Mode dans le jeu (State.Tile)
+enum State { Draw, Tile, Pawn, End };                  // Etats du jeu
+enum Mode { Camera, Rotation, Pose, Question, Pion };  // Modes dans le jeu
 
-typedef struct{
+typedef struct {
     char cotes[4];
     char centre;
-    int tileType; // 0 = tuile vide // 1 = tuile pleine // 2 = emplacement pour poser
+    int tileType;  // 0 = tuile vide // 1 = tuile pleine // 2 = emplacement pour
+                   // poser
 } TileStruct;
 
-typedef struct{
+typedef struct {
     int x, y;
 } CoordStruct;
 
-typedef struct{
+typedef struct {
+    CoordStruct coords;
+    int idPlayers;
+    int side;  // N 0 - E 1 - S 2 - O 4 - C 5
+} PawnStruct;
+
+typedef struct {
+    CoordStruct coords;
+    char buildingType;
+    int size;
+    int side;
+} BuildingStruct;
+
+typedef struct {
     int id;
     int color;
-	int score;
-	int nbPions;
+    int score;
+    int nbPions;
     int isHuman;
 } PlayerStruct;
 
-typedef struct{
+typedef struct {
     PlayerStruct currentPlayer;
     TileStruct currentTile;
     enum State currentState;
     enum Mode currentMode;
+
     int coordYMin;
     int coordXMin;
     int tileIndex;
+
+    int currentX;
+    int currentY;
+    int currentSide;
+
+    int turnEnd;
 } TurnStruct;
 
-typedef struct{
+typedef struct {
     int nbPlayers;
     PlayerStruct playerList[5];
     TileStruct pile[72];
     TileStruct grid[143][143];
     TurnStruct turn;
+    PawnStruct pawns[26];
+    BuildingStruct
+        buildings[25];  // 25 pions max dans le jeu donc 25 structures max aussi
 } GameStruct;
 
-#endif // GAME_STRUCTURES
+#endif  // GAME_STRUCTURES

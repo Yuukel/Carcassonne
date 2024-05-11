@@ -3,8 +3,11 @@
 
 #include "game_structures.h"
 
-void parseur_csv(char * fileName, TileStruct * pile);
-// fonction pour placer la tuile de départ sur la grille
-// fonction pour mélanger la pile
+GameStruct InitGame(GameStruct game);
+void ParseurCSV(char* fileName, TileStruct* pile);
+GameStruct PlaceStartingTile(GameStruct game);
+void ShufflePile(TileStruct* pile);
+void InitPawns(PawnStruct* pawns);
+void InitBuildings(BuildingStruct* buildings);
 
-#endif // START
+#endif  // START

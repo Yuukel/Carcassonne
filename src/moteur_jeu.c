@@ -1,12 +1,15 @@
+#include <ncurses.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <ncurses.h>
 
+#include "draw_functions.h"
+#include "end_functions.h"
 #include "game_structures.h"
-#include "title_screen.h"
-#include "start_functions.h"
+#include "pawn_functions.h"
 #include "print_functions.h"
+#include "start_functions.h"
 #include "tile_functions.h"
+#include "title_screen.h"
 
 // A faire : dispatcher dans plusieurs fichiers etc
 // A faire : commenter chaque fonction etc
@@ -34,52 +37,42 @@
 // Fonctions pour ncurses
 void InitNcurses();
 
-GameStruct game;
-TileStruct grid[DIMENSION_MAX][DIMENSION_MAX];
+GameStruct WaitingForAction(GameStruct game);
 
-//afficher la grille en dessous (je vais dormir)
-void PrintGameScreenDbg(GameStruct game){
+GameStruct game;
+
+// afficher la grille en dessous (je vais dormir)
+void PrintGameScreenDbg(GameStruct game) {
     game.turn.coordXMin = -5;
     game.turn.coordYMin = -5;
-    game.turn.currentPlayer = game.playerList[0];
-    game.turn.currentTile = game.pile[1];
-    game.turn.tileIndex = 0;
-    // game.turn.currentTile = (TileStruct){{'v','v','v','v'},'v',1};
-    do{
-        erase();
-        PrintPlayers(game);
-        game = CanBePlaced(game);
-        game = ChangeNumbers(game);
-        PrintGrid(game,game.turn.coordXMin,game.turn.coordYMin);
-        PrintTurnInfos(game.turn);
-        PrintCommands(game.turn);
+    do {
+        game = InitTurn(game);
+        game.turn.currentState = Tile;
+        do {
+            erase();
+            PrintPlayers(game);
+            if (game.turn.currentState == Tile) {
+                game = CanBePlaced(game);
+                game = ChangeNumbers(game);
+            }
+            PrintGrid(game, game.turn.coordXMin, game.turn.coordYMin);
+            PrintTurnInfos(game.turn);
+            PrintCommands(game.turn, game);
 
-        game = WaitingForAction(game);
-    }while(1);
+            game = WaitingForAction(game);
+        } while (game.turn.turnEnd == 0);
+        RemoveTile(game.pile);
+        game.turn.currentState = End;
+    } while (game.pile[0].tileType != 0);
 }
 
-int main(int argc, char * argv[])
-{
-    parseur_csv("tuiles_base_simplifiees.csv", game.pile);
-
+int main(int argc, char* argv[]) {
     InitNcurses();
 
     TitleScreen();
 
-    game.playerList[0] = (PlayerStruct){1, RED, 0, 5, 1};
-    game.playerList[1] = (PlayerStruct){2, GREEN, 0, 5, 0};
-    game.playerList[2] = (PlayerStruct){0, 0, 0, 0, -1};
-    game.playerList[3] = (PlayerStruct){0, 0, 0, 0, -1};
-    game.playerList[4] = (PlayerStruct){0, 0, 0, 0, -1};
-    game = SelectPlayers(game);
+    game = InitGame(game);
 
-    for(int i = 0 ; i < 143 ; i++){
-        for(int j = 0 ; j < 143 ; j++){
-            game.grid[i][j] = (TileStruct){{'0','0','0','0'},'0',0};
-        }
-    }
-    game.grid[71][71] = game.pile[0]; // tuile de départ en (0 ; 0)
-    game.grid[73][71] = game.pile[71-5]; // 2e tuile pour exemple
     erase();
 
     PrintGameScreenDbg(game);
@@ -89,7 +82,7 @@ int main(int argc, char * argv[])
 }
 
 // A commenter
-void InitNcurses(){
+void InitNcurses() {
     initscr();
     cbreak();
     noecho();
@@ -112,4 +105,73 @@ void InitNcurses(){
     init_pair(ABBAYE, COLOR_BLACK, COLOR_RED);
     init_pair(FIN, COLOR_BLACK, COLOR_WHITE);
     init_pair(PLACEMENT, COLOR_BLACK, COLOR_WHITE);
+}
+
+GameStruct WaitingForAction(GameStruct game) {
+    int ch;
+    ch = getch();
+
+    if (game.turn.currentState == Tile) {
+        if (ch == 'c') {
+            game.turn.currentMode = Camera;
+        }
+
+        if (ch == 'r') {
+            game.turn.currentMode = Rotation;
+        }
+
+        if (ch == 'p') {
+            game.turn.currentMode = Pose;
+        }
+
+        if (game.turn.currentMode == Rotation) {
+            game.turn.currentTile = RotateTile(game.turn.currentTile, ch);
+        }
+
+        if (game.turn.currentMode == Camera) {
+            game.turn = MoveCamera(game.turn, ch);
+        }
+
+        if (game.turn.currentMode == Pose) {
+            game = PlaceTile(game, ch);
+        }
+    } else if (game.turn.currentState == Pawn) {
+        if (game.turn.currentMode == Question) {
+            if (ch == ' ') {
+                game.grid[game.turn.currentX][game.turn.currentY] =
+                    game.turn.currentTile;
+                game.turn.currentMode = Pion;
+                game.turn.currentSide = 4;
+                game = PlacePawn(
+                    game, (CoordStruct){game.turn.currentX, game.turn.currentY},
+                    game.turn.currentSide);
+            }
+
+            if (ch == 'x') {
+                game.grid[game.turn.currentX][game.turn.currentY] =
+                    game.turn.currentTile;
+                game.turn.turnEnd = 1;
+                game.turn.currentState = Tile;
+            }
+        } else if (game.turn.currentMode == Pion) {
+            if (ch == ' ') {
+                game = AddPawn(game);
+            }
+
+            if (ch == 'x') {
+                game.grid[game.turn.currentX][game.turn.currentY] =
+                    game.turn.currentTile;
+                game.turn.turnEnd = 1;
+                game.turn.currentState = Tile;
+            }
+
+            if (ch == KEY_LEFT || ch == KEY_RIGHT || ch == KEY_UP ||
+                ch == KEY_DOWN) {
+                game = ChoosePawnPosition(game, game.turn.currentX,
+                                          game.turn.currentY, ch);
+            }
+        }
+    }
+
+    return game;
 }
