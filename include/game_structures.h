@@ -44,12 +44,12 @@ typedef struct {
     int side;  // N 0 - E 1 - S 2 - O 4 - C 5
 } PawnStruct;
 
-typedef struct {
-    CoordStruct coords;
-    char buildingType;
-    int size;
-    int side;
-} BuildingStruct;
+// typedef struct {
+//     CoordStruct coords;
+//     char buildingType;
+//     int size;
+//     int side;
+// } BuildingStruct;
 
 typedef struct {
     int id;
@@ -74,6 +74,8 @@ typedef struct {
     int currentSide;
 
     int turnEnd;
+
+    CoordStruct turnX;
 } TurnStruct;
 
 typedef struct {
@@ -83,7 +85,7 @@ typedef struct {
     TileStruct grid[143][143];
     TurnStruct turn;
     PawnStruct pawns[26];
-    BuildingStruct buildings[25];
+    // BuildingStruct buildings[25];
 } GameStruct;
 
 #endif  // GAME_STRUCTURES

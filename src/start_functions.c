@@ -34,7 +34,7 @@ GameStruct InitGame(GameStruct game) {
     InitPawns(game.pawns);
 
     // Initialisation des constructions (vide)
-    InitBuildings(game.buildings);
+    // InitBuildings(game.buildings);
 
     return game;
 }
@@ -97,11 +97,11 @@ void InitPawns(PawnStruct* pawns) {
     }
 }
 
-void InitBuildings(BuildingStruct* buildings) {
-    for (int i = 0; i < 25; i++) {
-        buildings[i].coords = (CoordStruct){-1, -1};
-        buildings[i].buildingType = '0';
-        buildings[i].size = 0;
-        buildings[i].side = 0;
-    }
-}
+// void InitBuildings(BuildingStruct* buildings) {
+//     for (int i = 0; i < 25; i++) {
+//         buildings[i].coords = (CoordStruct){-1, -1};
+//         buildings[i].buildingType = '0';
+//         buildings[i].size = 0;
+//         buildings[i].side = 0;
+//     }
+// }

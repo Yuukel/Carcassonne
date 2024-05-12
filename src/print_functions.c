@@ -191,31 +191,31 @@ void PrintTurnInfos(TurnStruct turn) {
         // OUEST
         SetColor(turn.currentTile.cotes[3]);
         wmove(stdscr, LIGNEMIN + 5, 136 + 1);
-        printw(" %c ", turn.currentTile.cotes[3]);
+        printw("   ");
         RemoveColor();
 
         // NORD
         SetColor(turn.currentTile.cotes[0]);
         wmove(stdscr, LIGNEMIN + 4, 136 + 4);
-        printw(" %c ", turn.currentTile.cotes[0]);
+        printw("   ");
         RemoveColor();
 
         // CENTRE
         SetColor(turn.currentTile.centre);
         wmove(stdscr, LIGNEMIN + 5, 136 + 4);
-        printw(" %c ", turn.currentTile.centre);
+        printw("   ");
         RemoveColor();
 
         // SUD
         SetColor(turn.currentTile.cotes[2]);
         wmove(stdscr, LIGNEMIN + 6, 136 + 4);
-        printw(" %c ", turn.currentTile.cotes[2]);
+        printw("   ");
         RemoveColor();
 
         // EST
         SetColor(turn.currentTile.cotes[1]);
         wmove(stdscr, LIGNEMIN + 5, 136 + 7);
-        printw(" %c ", turn.currentTile.cotes[1]);
+        printw("   ");
         RemoveColor();
     }
 
@@ -345,8 +345,10 @@ void PrintCommands(TurnStruct turn, GameStruct game) {
             wmove(stdscr, 43, 0);
             printw("Espace : Oui     X : Non");
         } else if (turn.currentMode == Pion)
-            printw("< ^ v > : Deplacer le pion dans le sens voulu     Espace : Poser le pion");
+            printw("< ^ v > : Deplacer le pion dans le sens voulu     Espace : Poser le pion     X : Annuler");
     }
+    wmove(stdscr, 44, 0);
+    printw("(%d ; %d)", game.turn.turnX.x - 71, game.turn.turnX.y - 71);
 }
 
 GameStruct ResetCanBePlaced(GameStruct game) {

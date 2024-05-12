@@ -62,6 +62,7 @@ void PrintGameScreenDbg(GameStruct game) {
             game = WaitingForAction(game);
         } while (game.turn.turnEnd == 0);
         RemoveTile(game.pile);
+        game = EndTurn(game);
         game.turn.currentState = End;
     } while (game.pile[0].tileType != 0);
 }
@@ -152,7 +153,7 @@ GameStruct WaitingForAction(GameStruct game) {
             }
 
             if (ch == 'x') {
-                // remove last pawn (changement d'avis)
+                game = RemovePawn(game, game.pawns[25]);
                 game.turn.turnEnd = 1;
             }
 
