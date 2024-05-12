@@ -4,10 +4,10 @@
 #include "print_functions.h"
 
 TurnStruct MoveCamera(TurnStruct turn, int ch) {
-    if (ch == KEY_DOWN && turn.coordYMin > -71) turn.coordYMin--;
-    if (ch == KEY_UP && turn.coordYMin < 61) turn.coordYMin++;
-    if (ch == KEY_RIGHT && turn.coordXMin > -71) turn.coordXMin--;
-    if (ch == KEY_LEFT && turn.coordXMin < 61) turn.coordXMin++;
+    if (ch == KEY_UP && turn.coordYMin > -71) turn.coordYMin--;
+    if (ch == KEY_DOWN && turn.coordYMin < 61) turn.coordYMin++;
+    if (ch == KEY_LEFT && turn.coordXMin > -71) turn.coordXMin--;
+    if (ch == KEY_RIGHT && turn.coordXMin < 61) turn.coordXMin++;
 
     return turn;
 }
@@ -122,6 +122,8 @@ GameStruct PlaceTile(GameStruct game, int ch) {
             if (game.turn.currentPlayer.nbPions > 0) {
                 game.turn.currentState = Pawn;
                 game.turn.currentMode = Question;
+            } else {
+                game.turn.turnEnd = 1;
             }
             game.turn.currentX = x;
             game.turn.currentY = y;

@@ -138,20 +138,13 @@ GameStruct WaitingForAction(GameStruct game) {
     } else if (game.turn.currentState == Pawn) {
         if (game.turn.currentMode == Question) {
             if (ch == ' ') {
-                game.grid[game.turn.currentX][game.turn.currentY] =
-                    game.turn.currentTile;
                 game.turn.currentMode = Pion;
                 game.turn.currentSide = 4;
-                game = PlacePawn(
-                    game, (CoordStruct){game.turn.currentX, game.turn.currentY},
-                    game.turn.currentSide);
+                game = PlacePawn(game, (CoordStruct){game.turn.currentX, game.turn.currentY}, game.turn.currentSide);
             }
 
             if (ch == 'x') {
-                game.grid[game.turn.currentX][game.turn.currentY] =
-                    game.turn.currentTile;
                 game.turn.turnEnd = 1;
-                game.turn.currentState = Tile;
             }
         } else if (game.turn.currentMode == Pion) {
             if (ch == ' ') {
@@ -159,16 +152,12 @@ GameStruct WaitingForAction(GameStruct game) {
             }
 
             if (ch == 'x') {
-                game.grid[game.turn.currentX][game.turn.currentY] =
-                    game.turn.currentTile;
+                // remove last pawn (changement d'avis)
                 game.turn.turnEnd = 1;
-                game.turn.currentState = Tile;
             }
 
-            if (ch == KEY_LEFT || ch == KEY_RIGHT || ch == KEY_UP ||
-                ch == KEY_DOWN) {
-                game = ChoosePawnPosition(game, game.turn.currentX,
-                                          game.turn.currentY, ch);
+            if (ch == KEY_LEFT || ch == KEY_RIGHT || ch == KEY_UP || ch == KEY_DOWN) {
+                game = ChoosePawnPosition(game, game.turn.currentX, game.turn.currentY, ch);
             }
         }
     }

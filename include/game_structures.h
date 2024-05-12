@@ -17,14 +17,21 @@
 #define FIN 12
 #define PLACEMENT 13
 
-enum State { Draw, Tile, Pawn, End };                  // Etats du jeu
-enum Mode { Camera, Rotation, Pose, Question, Pion };  // Modes dans le jeu
+enum State { Draw,
+             Tile,
+             Pawn,
+             End };  // Etats du jeu
+
+enum Mode { Camera,
+            Rotation,
+            Pose,
+            Question,
+            Pion };  // Modes dans le jeu
 
 typedef struct {
     char cotes[4];
     char centre;
-    int tileType;  // 0 = tuile vide // 1 = tuile pleine // 2 = emplacement pour
-                   // poser
+    int tileType;  // 0 = tuile vide // 1 = tuile pleine // 2 = emplacement pour poser
 } TileStruct;
 
 typedef struct {
@@ -76,8 +83,7 @@ typedef struct {
     TileStruct grid[143][143];
     TurnStruct turn;
     PawnStruct pawns[26];
-    BuildingStruct
-        buildings[25];  // 25 pions max dans le jeu donc 25 structures max aussi
+    BuildingStruct buildings[25];
 } GameStruct;
 
 #endif  // GAME_STRUCTURES

@@ -113,22 +113,19 @@ void PrintTile(TileStruct t, int i, int j, PawnStruct pawns[26], int x, int y) {
 
         // CENTRE
         SetColor(t.centre);
-        wmove(stdscr, LIGNEMINTUILE + 1 + (j * 3),
-              COLONNEMINTUILE + 3 + (i * 9));
+        wmove(stdscr, LIGNEMINTUILE + 1 + (j * 3), COLONNEMINTUILE + 3 + (i * 9));
         printw(" %c ", c[4]);
         RemoveColor();
 
         // SUD
         SetColor(t.cotes[2]);
-        wmove(stdscr, LIGNEMINTUILE + 2 + (j * 3),
-              COLONNEMINTUILE + 3 + (i * 9));
+        wmove(stdscr, LIGNEMINTUILE + 2 + (j * 3), COLONNEMINTUILE + 3 + (i * 9));
         printw(" %c ", c[2]);
         RemoveColor();
 
         // EST
         SetColor(t.cotes[1]);
-        wmove(stdscr, LIGNEMINTUILE + 1 + (j * 3),
-              COLONNEMINTUILE + 6 + (i * 9));
+        wmove(stdscr, LIGNEMINTUILE + 1 + (j * 3), COLONNEMINTUILE + 6 + (i * 9));
         printw(" %c ", c[1]);
         RemoveColor();
     }
@@ -149,8 +146,7 @@ void PrintGrid(GameStruct game, int coordXMin, int coordYMin) {
 
     for (int i = 0; i < longueur; i++) {
         for (int j = 0; j < hauteur; j++) {
-            PrintTile(game.grid[coordXMin + i + 71][coordYMin + j + 71], i, j,
-                      game.pawns, coordXMin + i + 71, coordYMin + j + 71);
+            PrintTile(game.grid[coordXMin + i + 71][coordYMin + j + 71], i, j, game.pawns, coordXMin + i + 71, coordYMin + j + 71);
         }
     }
 }
@@ -231,7 +227,6 @@ void PrintTurnInfos(TurnStruct turn) {
     }
 
     // Affichage du "panneau" mode
-    // turn.currentMode = Rotation;
     wmove(stdscr, LIGNEMIN + 8, 130);
     printw("+");
     for (int i = 0; i < 21; i++) {
@@ -257,26 +252,92 @@ void PrintTurnInfos(TurnStruct turn) {
         printw("-");
     }
     printw("+");
+
+    wmove(stdscr, LIGNEMIN + 12, 135);
+    attron(COLOR_PAIR(7));
+    printw("   ");
+    attroff(COLOR_PAIR(7));
+    printw(" = route");
+
+    wmove(stdscr, LIGNEMIN + 13, 135);
+    attron(COLOR_PAIR(8));
+    printw("   ");
+    attroff(COLOR_PAIR(8));
+    printw(" = pre");
+
+    wmove(stdscr, LIGNEMIN + 14, 135);
+    attron(COLOR_PAIR(9));
+    printw("   ");
+    attroff(COLOR_PAIR(9));
+    printw(" = ville");
+
+    wmove(stdscr, LIGNEMIN + 15, 135);
+    attron(COLOR_PAIR(10));
+    printw("   ");
+    attroff(COLOR_PAIR(10));
+    printw(" = blason");
+
+    wmove(stdscr, LIGNEMIN + 16, 135);
+    attron(COLOR_PAIR(11));
+    printw("   ");
+    attroff(COLOR_PAIR(11));
+    printw(" = abbaye");
+
+    wmove(stdscr, LIGNEMIN + 17, 135);
+    attron(COLOR_PAIR(12));
+    printw("   ");
+    attroff(COLOR_PAIR(12));
+    printw(" = village");
+
+    TileStruct tile = (TileStruct){{'0', '0', '0', '0'}, '0', 2};
+    if (tile.tileType != 0) {
+        // OUEST
+        SetColor(tile.cotes[3]);
+        wmove(stdscr, LIGNEMIN + 20, 132);
+        printw("   ");
+        RemoveColor();
+
+        // NORD
+        SetColor(tile.cotes[0]);
+        wmove(stdscr, LIGNEMIN + 19, 135);
+        printw("   ");
+        RemoveColor();
+
+        // CENTRE
+        SetColor(tile.centre);
+        wmove(stdscr, LIGNEMIN + 20, 135);
+        printw("   ");
+        RemoveColor();
+
+        // SUD
+        SetColor(tile.cotes[2]);
+        wmove(stdscr, LIGNEMIN + 21, 135);
+        printw("   ");
+        RemoveColor();
+
+        // EST
+        SetColor(tile.cotes[1]);
+        wmove(stdscr, LIGNEMIN + 20, 138);
+        printw("   ");
+        RemoveColor();
+    }
+
+    wmove(stdscr, LIGNEMIN + 20, 141);
+    printw(" = emplacement");
 }
 
 // affichage des commandes
 void PrintCommands(TurnStruct turn, GameStruct game) {
     if (turn.currentState == Tile) {
         wmove(stdscr, 42, 0);
-        printw(
-            "C : Changer le mode en \"Camera\"     R : Changer le mode en "
-            "\"Rotation\"      P : Changer le mode en \"Pose\"");
+        printw("C : Changer le mode en \"Camera\"     R : Changer le mode en \"Rotation\"      P : Changer le mode en \"Pose\"");
         wmove(stdscr, 43, 0);
         if (turn.currentMode == Rotation)
-            printw(
-                "< : Tourne la tuile vers la gauche     > : Tourne la tuile "
-                "vers la droite");
+            printw("< : Tourner la tuile vers la gauche     > : Tourner la tuile vers la droite");
         else if (turn.currentMode == Camera)
             printw("< ^ v > : Deplacer la camera dans le sens voulu");
         else if (turn.currentMode == Pose)
-            printw(
-                "< > : Change l'emplacement ou vous voulez poser la tuile     "
-                "Espace : Pose la tuile");
+            printw("< > : Changer l'emplacement ou vous voulez poser la tuile     Espace : Poser la tuile");
     } else if (turn.currentState == Pawn) {
         wmove(stdscr, 42, 0);
         if (turn.currentMode == Question) {
@@ -284,7 +345,7 @@ void PrintCommands(TurnStruct turn, GameStruct game) {
             wmove(stdscr, 43, 0);
             printw("Espace : Oui     X : Non");
         } else if (turn.currentMode == Pion)
-            printw("< ^ v > : Deplacer le pion dans le sens voulu");
+            printw("< ^ v > : Deplacer le pion dans le sens voulu     Espace : Poser le pion");
     }
 }
 
@@ -309,51 +370,25 @@ GameStruct CanBePlaced(GameStruct game) {
                     (game.grid[x][y + 1].tileType == 1) ||
                     (game.grid[x - 1][y].tileType == 1) ||
                     (game.grid[x + 1][y].tileType == 1)) {
-                    int northCond = 0, southCond = 0, eastCond = 0,
-                        westCond = 0;
+                    int northCond = 0, southCond = 0, eastCond = 0, westCond = 0;
                     if (x - 1 >= 0) {  // La tuile à l'ouest
-                        westCond = (game.grid[x - 1][y].tileType == 0) ||
-                                   (game.grid[x - 1][y].cotes[1] ==
-                                        game.turn.currentTile.cotes[3] ||
-                                    (game.grid[x - 1][y].cotes[1] == 'b' &&
-                                     game.turn.currentTile.cotes[3] == 'v') ||
-                                    (game.grid[x - 1][y].cotes[1] == 'v' &&
-                                     game.turn.currentTile.cotes[3] == 'b'));
+                        westCond = (game.grid[x - 1][y].tileType == 0) || (game.grid[x - 1][y].cotes[1] == game.turn.currentTile.cotes[3] || (game.grid[x - 1][y].cotes[1] == 'b' && game.turn.currentTile.cotes[3] == 'v') || (game.grid[x - 1][y].cotes[1] == 'v' && game.turn.currentTile.cotes[3] == 'b'));
                         if (game.grid[x - 1][y].tileType == 2) westCond = 1;
                     }
                     if (x + 1 < 143) {  // La tuile à l'est
-                        eastCond = (game.grid[x + 1][y].tileType == 0) ||
-                                   (game.grid[x + 1][y].cotes[3] ==
-                                        game.turn.currentTile.cotes[1] ||
-                                    (game.grid[x + 1][y].cotes[3] == 'b' &&
-                                     game.turn.currentTile.cotes[1] == 'v') ||
-                                    (game.grid[x + 1][y].cotes[3] == 'v' &&
-                                     game.turn.currentTile.cotes[1] == 'b'));
+                        eastCond = (game.grid[x + 1][y].tileType == 0) || (game.grid[x + 1][y].cotes[3] == game.turn.currentTile.cotes[1] || (game.grid[x + 1][y].cotes[3] == 'b' && game.turn.currentTile.cotes[1] == 'v') || (game.grid[x + 1][y].cotes[3] == 'v' && game.turn.currentTile.cotes[1] == 'b'));
                         if (game.grid[x + 1][y].tileType == 2) eastCond = 1;
                     }
                     if (y - 1 >= 0) {  // La tuile au nord
-                        northCond = (game.grid[x][y - 1].tileType == 0) ||
-                                    (game.grid[x][y - 1].cotes[2] ==
-                                         game.turn.currentTile.cotes[0] ||
-                                     (game.grid[x][y - 1].cotes[2] == 'b' &&
-                                      game.turn.currentTile.cotes[0] == 'v') ||
-                                     (game.grid[x][y - 1].cotes[2] == 'v' &&
-                                      game.turn.currentTile.cotes[0] == 'b'));
+                        northCond = (game.grid[x][y - 1].tileType == 0) || (game.grid[x][y - 1].cotes[2] == game.turn.currentTile.cotes[0] || (game.grid[x][y - 1].cotes[2] == 'b' && game.turn.currentTile.cotes[0] == 'v') || (game.grid[x][y - 1].cotes[2] == 'v' && game.turn.currentTile.cotes[0] == 'b'));
                         if (game.grid[x][y - 1].tileType == 2) northCond = 1;
                     }
                     if (y + 1 < 143) {  // La tuile au sud
-                        southCond = (game.grid[x][y + 1].tileType == 0) ||
-                                    (game.grid[x][y + 1].cotes[0] ==
-                                         game.turn.currentTile.cotes[2] ||
-                                     (game.grid[x][y + 1].cotes[0] == 'b' &&
-                                      game.turn.currentTile.cotes[2] == 'v') ||
-                                     (game.grid[x][y + 1].cotes[0] == 'v' &&
-                                      game.turn.currentTile.cotes[2] == 'b'));
+                        southCond = (game.grid[x][y + 1].tileType == 0) || (game.grid[x][y + 1].cotes[0] == game.turn.currentTile.cotes[2] || (game.grid[x][y + 1].cotes[0] == 'b' && game.turn.currentTile.cotes[2] == 'v') || (game.grid[x][y + 1].cotes[0] == 'v' && game.turn.currentTile.cotes[2] == 'b'));
                         if (game.grid[x][y + 1].tileType == 2) southCond = 1;
                     }
 
-                    if ((eastCond) && (westCond) && (southCond) &&
-                        (northCond)) {
+                    if ((eastCond) && (westCond) && (southCond) && (northCond)) {
                         game.grid[x][y].tileType = 2;
                     }
                 }

@@ -45,29 +45,21 @@ int CheckCanBePlaced(GameStruct game, TileStruct t) {
                     (game.grid[x][y + 1].tileType == 1) ||
                     (game.grid[x - 1][y].tileType == 1) ||
                     (game.grid[x + 1][y].tileType == 1)) {
-                    int northCond = 0, southCond = 0, eastCond = 0,
-                        westCond = 0;
+                    int northCond = 0, southCond = 0, eastCond = 0, westCond = 0;
                     if (x - 1 >= 0) {  // La tuile à l'ouest
-                        westCond = (game.grid[x - 1][y].tileType == 0) ||
-                                   (game.grid[x - 1][y].cotes[1] == t.cotes[3]);
+                        westCond = (game.grid[x - 1][y].tileType == 0) || (game.grid[x - 1][y].cotes[1] == t.cotes[3]);
                     }
                     if (x + 1 < 143) {  // La tuile à l'est
-                        eastCond = (game.grid[x + 1][y].tileType == 0) ||
-                                   (game.grid[x + 1][y].cotes[3] == t.cotes[1]);
+                        eastCond = (game.grid[x + 1][y].tileType == 0) || (game.grid[x + 1][y].cotes[3] == t.cotes[1]);
                     }
                     if (y - 1 >= 0) {  // La tuile au nord
-                        northCond =
-                            (game.grid[x][y - 1].tileType == 0) ||
-                            (game.grid[x][y - 1].cotes[2] == t.cotes[0]);
+                        northCond = (game.grid[x][y - 1].tileType == 0) || (game.grid[x][y - 1].cotes[2] == t.cotes[0]);
                     }
                     if (y + 1 < 143) {  // La tuile au sud
-                        southCond =
-                            (game.grid[x][y + 1].tileType == 0) ||
-                            (game.grid[x][y + 1].cotes[0] == t.cotes[2]);
+                        southCond = (game.grid[x][y + 1].tileType == 0) || (game.grid[x][y + 1].cotes[0] == t.cotes[2]);
                     }
 
-                    if ((eastCond) && (westCond) && (southCond) &&
-                        (northCond)) {
+                    if ((eastCond) && (westCond) && (southCond) && (northCond)) {
                         return 1;
                     }
                 }
