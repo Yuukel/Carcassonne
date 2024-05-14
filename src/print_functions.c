@@ -246,12 +246,16 @@ void PrintTurnInfos(TurnStruct turn) {
         printw(" ");
     }
     printw("|");
+
     wmove(stdscr, LIGNEMIN + 10, 130);
     printw("+");
     for (int i = 0; i < 21; i++) {
         printw("-");
     }
     printw("+");
+
+    wmove(stdscr, LIGNEMIN + 11, 131);
+    printw("Tuiles restantes : %d", turn.nbTileInPile);
 
     wmove(stdscr, LIGNEMIN + 12, 135);
     attron(COLOR_PAIR(7));
@@ -347,8 +351,6 @@ void PrintCommands(TurnStruct turn, GameStruct game) {
         } else if (turn.currentMode == Pion)
             printw("< ^ v > : Deplacer le pion dans le sens voulu     Espace : Poser le pion     X : Annuler");
     }
-    wmove(stdscr, 44, 0);
-    printw("(%d ; %d)", game.turn.turnX.x - 71, game.turn.turnX.y - 71);
 }
 
 GameStruct ResetCanBePlaced(GameStruct game) {

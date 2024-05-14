@@ -65,6 +65,7 @@ void PrintGameScreenDbg(GameStruct game) {
         game = EndTurn(game);
         game.turn.currentState = End;
     } while (game.pile[0].tileType != 0);
+    PrintEndScreen(game);
 }
 
 int main(int argc, char* argv[]) {

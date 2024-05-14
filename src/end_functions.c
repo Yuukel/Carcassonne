@@ -1,5 +1,7 @@
 #include "end_functions.h"
 
+#include <ncurses.h>
+
 #include "draw_functions.h"
 #include "pawn_functions.h"
 
@@ -41,7 +43,9 @@ GameStruct EndTurn(GameStruct game) {
             }
         } else if (side == 'r') {
             int val = 0;
-            val = RouteRoad(game, game.pawns[index].coords);
+            val = RouteRoadLoop(game, game.pawns[index].coords);
+            // if (val == 0) game.turn.roadComplete = RouteRoad(game, game.pawns[index].coords);
+            if (val == 0) val = RouteRoad(game, game.pawns[index].coords);
             if (val > 0) {
                 game = AddScore(game, game.pawns[index], val);
                 index++;
@@ -85,100 +89,11 @@ int RouteRoad(GameStruct game, CoordStruct coords) {
     int y = coords.y;
     int size = 0;
 
-    int side = 4;
+    int previousDirection = 4;  // on place la direction au centre
     TileStruct tuile;
-    CoordStruct coordsList[72];
-    int index = 0;
-    int already = 0;
-    while (game.grid[x][y].centre == 'r' && already == 0) {
-        tuile = game.grid[x][y];
 
-        coordsList[index] = (CoordStruct){x, y};
-        index++;
+    CoordStruct extremites = (CoordStruct){-1, -1};
 
-        if (tuile.cotes[0] == 'r' && side != 2) {
-            side = 0;
-            y = y - 1;
-        } else if (tuile.cotes[1] == 'r' && side != 3) {
-            side = 1;
-            x = x + 1;
-        } else if (tuile.cotes[2] == 'r' && side != 0) {
-            side = 2;
-            y = y + 1;
-        } else if (tuile.cotes[3] == 'r' && side != 1) {
-            side = 3;
-            x = x - 1;
-        }
-
-        for (int i = 0; i < index; i++) {
-            if (coordsList[i].x == x && coordsList[i].y == y) {
-                already = 1;
-            }
-        }
-    }
-
-    if (game.grid[x][y].tileType == 0) return 0;
-
-    if (side == 2) {
-        side = 0;
-        y = y - 1;
-    } else if (side == 3) {
-        side = 1;
-        x = x + 1;
-    } else if (side == 0) {
-        side = 2;
-        y = y + 1;
-    } else if (side == 1) {
-        side = 3;
-        x = x - 1;
-    }
-
-    tuile = game.grid[x][y];
-
-    index = 0;
-    already = 0;
-    while (tuile.centre == 'r' && already == 0) {
-        coordsList[index] = (CoordStruct){x, y};
-        index++;
-
-        if (tuile.cotes[0] == 'r' && side != 2) {
-            side = 0;
-            y = y - 1;
-            size++;
-        } else if (tuile.cotes[1] == 'r' && side != 3) {
-            side = 1;
-            x = x + 1;
-            size++;
-        } else if (tuile.cotes[2] == 'r' && side != 0) {
-            side = 2;
-            y = y + 1;
-            size++;
-        } else if (tuile.cotes[3] == 'r' && side != 1) {
-            side = 3;
-            x = x - 1;
-            size++;
-        }
-        tuile = game.grid[x][y];
-
-        for (int i = 0; i < index; i++) {
-            if (coordsList[i].x == x && coordsList[i].y == y) {
-                already = 1;
-            }
-        }
-    }
-
-    if (game.grid[x][y].tileType == 0) return 0;
-
-    if (already == 0) size += 2;
-
-    int val = CheckPawnAmount(game, coords, coordsList);
-    if (val == 1)
-        return size;
-    else
-        return 0;
-}
-
-int CheckPawnAmount(GameStruct game, CoordStruct coords, CoordStruct coordsList[72]) {
     PawnStruct pawn;
     for (int i = 0; i < 26; i++) {
         if (game.pawns[i].coords.x == coords.x && game.pawns[i].coords.y == coords.y) {
@@ -186,25 +101,196 @@ int CheckPawnAmount(GameStruct game, CoordStruct coords, CoordStruct coordsList[
         }
     }
 
-    int pawnsAmount[5];
-    for (int i = 0; i < 72; i++) {
-        for (int j = 0; j < 26; j++) {
-            if (coordsList[i].x == game.pawns[j].coords.x && coordsList[i].y == game.pawns[j].coords.y) {
-                pawnsAmount[game.pawns[j].idPlayers - 1]++;
+    previousDirection = pawn.side;
+
+    if (game.grid[x][y].centre != 'r') {
+        if (previousDirection == 0) {
+            y--;
+        } else if (previousDirection == 1) {
+            x++;
+        } else if (previousDirection == 2) {
+            y++;
+        } else if (previousDirection == 3) {
+            x--;
+        }
+    }
+
+    // Boucle de parcours, si c'est pas une extrémité
+    while (game.grid[x][y].centre == 'r') {
+        tuile = game.grid[x][y];
+
+        if (tuile.cotes[0] == 'r' && previousDirection != 2) {
+            previousDirection = 0;
+            y = y - 1;
+        } else if (tuile.cotes[1] == 'r' && previousDirection != 3) {
+            previousDirection = 1;
+            x = x + 1;
+        } else if (tuile.cotes[2] == 'r' && previousDirection != 0) {
+            previousDirection = 2;
+            y = y + 1;
+        } else if (tuile.cotes[3] == 'r' && previousDirection != 1) {
+            previousDirection = 3;
+            x = x - 1;
+        }
+    }
+
+    // Route incomplète
+    // if (game.grid[x][y].tileType == 0) return (CoordStruct){100 + x, 100 + y};
+    if (game.grid[x][y].tileType == 0) return 0;
+
+    extremites = (CoordStruct){x, y};
+
+    // Demi tour
+    if (previousDirection == 0) {
+        y++;
+        previousDirection = 2;
+    } else if (previousDirection == 1) {
+        x--;
+        previousDirection = 3;
+    } else if (previousDirection == 2) {
+        y--;
+        previousDirection = 0;
+    } else if (previousDirection == 3) {
+        x++;
+        previousDirection = 1;
+    }
+
+    tuile = game.grid[x][y];
+
+    while (tuile.centre == 'r') {
+        if (tuile.cotes[0] == 'r' && previousDirection != 2) {
+            previousDirection = 0;
+            y = y - 1;
+            size++;
+        } else if (tuile.cotes[1] == 'r' && previousDirection != 3) {
+            previousDirection = 1;
+            x = x + 1;
+            size++;
+        } else if (tuile.cotes[2] == 'r' && previousDirection != 0) {
+            previousDirection = 2;
+            y = y + 1;
+            size++;
+        } else if (tuile.cotes[3] == 'r' && previousDirection != 1) {
+            previousDirection = 3;
+            x = x - 1;
+            size++;
+        }
+
+        tuile = game.grid[x][y];
+    }
+
+    // if (game.grid[x][y].tileType == 0) return (CoordStruct){x, y};
+    if (game.grid[x][y].tileType == 0) return 0;
+
+    if (extremites.x == x && extremites.y == y)
+        size++;
+    else
+        size += 2;
+
+    // return (CoordStruct){1000 + size + 71, 1000 + size + 71};
+    return size;
+}
+
+int RouteRoadLoop(GameStruct game, CoordStruct coords) {
+    int x = coords.x;
+    int y = coords.y;
+    int size = 0;
+
+    int previousDirection = 4;  // on place la direction au centre
+    TileStruct tuile;
+
+    // Choisir vers où on va partir
+    for (int i = 0; i < 4; i++) {
+        if (game.grid[x][y].cotes[i] == 'r') {
+            previousDirection = i;
+            break;
+        }
+    }
+
+    game.grid[x][y].visited = 1;  // Première tuile visitée
+
+    // Commencer le parcours
+    if (previousDirection == 0) {
+        y--;
+    } else if (previousDirection == 1) {
+        x++;
+    } else if (previousDirection == 2) {
+        y++;
+    } else if (previousDirection == 3) {
+        x--;
+    }
+
+    // Boucle de parcours
+    while (game.grid[x][y].centre == 'r' && game.grid[x][y].visited == 0) {
+        tuile = game.grid[x][y];
+        game.grid[x][y].visited = 1;  // tuile visitée
+
+        if (tuile.cotes[0] == 'r' && previousDirection != 2) {
+            previousDirection = 0;
+            y = y - 1;
+            size++;
+        } else if (tuile.cotes[1] == 'r' && previousDirection != 3) {
+            previousDirection = 1;
+            x = x + 1;
+            size++;
+        } else if (tuile.cotes[2] == 'r' && previousDirection != 0) {
+            previousDirection = 2;
+            y = y + 1;
+            size++;
+        } else if (tuile.cotes[3] == 'r' && previousDirection != 1) {
+            previousDirection = 3;
+            x = x - 1;
+            size++;
+        }
+    }
+
+    // Route incomplète
+    // if (game.grid[x][y].tileType != 1) return 0; // marche pas ?
+    // if (game.grid[x][y].centre == 'r') return 1;
+
+    if (game.grid[x][y].centre != 'r') return 0;
+    size++;
+    return size;
+}
+
+void selectionSort(int t[], int n, GameStruct game) {
+    for (int i = 0; i < n - 1; i++) {
+        int maxIndex = i;
+        for (int j = i + 1; j < n; j++) {
+            if (game.playerList[j].score > game.playerList[maxIndex].score) {
+                int temp = t[i];
+                t[i] = t[j];
+                t[j] = temp;
             }
         }
     }
+}
 
-    int max = pawnsAmount[0];
-    for (int i = 1; i < 5; i++) {
-        if (pawnsAmount[i] > max) {
-            max = pawnsAmount[i];
+void PrintEndScreen(GameStruct game) {
+    int t[5] = {1, 2, 3, 4, 5};
+    selectionSort(t, game.nbPlayers, game);
+    int ch;
+    do {
+        erase();
+        printw("   _____ _                _____ _____ ______ __  __ ______ _   _ _______ \n");
+        printw("  / ____| |        /\\    / ____/ ____|  ____|  \\/  |  ____| \\ | |__   __| \n");
+        printw(" | |    | |       /  \\  | (___| (___ | |__  | \\  / | |__  |  \\| |  | |    \n");
+        printw(" | |    | |      / /\\ \\  \\___ \\\\___ \\|  __| | |\\/| |  __| | . ` |  | |    \n");
+        printw(" | |____| |____ / ____ \\ ____) |___) | |____| |  | | |____| |\\  |  | |    \n");
+        printw("  \\_____|______/_/    \\_\\_____/_____/|______|_|  |_|______|_| \\_|  |_|    \n");
+        printw("\n\n\n");
+
+        for (int i = 0; i < game.nbPlayers; i++) {
+            attron(COLOR_PAIR(game.playerList[t[i] - 1].color));
+            printw("Joueur %d ", t[i]);
+            attroff(COLOR_PAIR(game.playerList[t[i] - 1].color));
+            printw(": %d points\n", game.playerList[t[i] - 1].score);
         }
-    }
 
-    if (pawnsAmount[pawn.idPlayers - 1] == max) {
-        return 1;
-    } else {
-        return 0;
-    }
+        printw("\n\n");
+        printw("Appuyez sur espace pour terminer le programme.");
+
+        ch = getch();
+        if (ch == ' ') break;
+    } while (1);
 }

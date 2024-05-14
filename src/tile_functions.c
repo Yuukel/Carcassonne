@@ -128,6 +128,7 @@ GameStruct PlaceTile(GameStruct game, int ch) {
             game.turn.currentX = x;
             game.turn.currentY = y;
             game.grid[x][y] = game.turn.currentTile;
+            game.turn.nbTileInPile--;
         }
     }
 

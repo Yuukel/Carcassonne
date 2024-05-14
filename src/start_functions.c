@@ -33,8 +33,7 @@ GameStruct InitGame(GameStruct game) {
     // Initialisation des pions (vide)
     InitPawns(game.pawns);
 
-    // Initialisation des constructions (vide)
-    // InitBuildings(game.buildings);
+    game.turn.nbTileInPile = 71;
 
     return game;
 }
