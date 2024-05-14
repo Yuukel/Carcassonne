@@ -81,11 +81,13 @@ void ShufflePile(TileStruct* pile) {
     TileStruct temp;
     srand(time(NULL));
 
-    for (int i = 70; i > 0; i--) {
-        j = rand() % (i + 1);
-        temp = pile[j];
-        pile[j] = pile[i];
-        pile[i] = temp;
+    for (int z = 0; z < 10; z++) {
+        for (int i = 70; i > 0; i--) {
+            j = rand() % (i + 1);
+            temp = pile[j];
+            pile[j] = pile[i];
+            pile[i] = temp;
+        }
     }
 }
 
