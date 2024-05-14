@@ -44,7 +44,6 @@ GameStruct EndTurn(GameStruct game) {
         } else if (side == 'r') {
             int val = 0;
             val = RouteRoadLoop(game, game.pawns[index].coords);
-            // if (val == 0) game.turn.roadComplete = RouteRoad(game, game.pawns[index].coords);
             if (val == 0) val = RouteRoad(game, game.pawns[index].coords);
             if (val > 0) {
                 game = AddScore(game, game.pawns[index], val);
@@ -135,7 +134,6 @@ int RouteRoad(GameStruct game, CoordStruct coords) {
     }
 
     // Route incomplète
-    // if (game.grid[x][y].tileType == 0) return (CoordStruct){100 + x, 100 + y};
     if (game.grid[x][y].tileType == 0) return 0;
 
     extremites = (CoordStruct){x, y};
@@ -179,7 +177,6 @@ int RouteRoad(GameStruct game, CoordStruct coords) {
         tuile = game.grid[x][y];
     }
 
-    // if (game.grid[x][y].tileType == 0) return (CoordStruct){x, y};
     if (game.grid[x][y].tileType == 0) return 0;
 
     if (extremites.x == x && extremites.y == y)
@@ -187,7 +184,6 @@ int RouteRoad(GameStruct game, CoordStruct coords) {
     else
         size += 2;
 
-    // return (CoordStruct){1000 + size + 71, 1000 + size + 71};
     return size;
 }
 
@@ -244,13 +240,14 @@ int RouteRoadLoop(GameStruct game, CoordStruct coords) {
         }
     }
 
-    // Route incomplète
-    // if (game.grid[x][y].tileType != 1) return 0; // marche pas ?
-    // if (game.grid[x][y].centre == 'r') return 1;
-
     if (game.grid[x][y].centre != 'r') return 0;
     size++;
     return size;
+}
+
+int RouteTown(GameStruct game, CoordStruct coords) {
+    //
+    return 0;
 }
 
 void selectionSort(int t[], int n, GameStruct game) {

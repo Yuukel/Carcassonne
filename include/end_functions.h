@@ -9,6 +9,7 @@ GameStruct AddScore(GameStruct game, PawnStruct pawn, int score);
 int RouteAbbey(GameStruct game, CoordStruct coords);
 int RouteRoad(GameStruct game, CoordStruct coords);
 int RouteRoadLoop(GameStruct game, CoordStruct coords);
+int RouteTown(GameStruct game, CoordStruct coords);
 void PrintEndScreen(GameStruct game);
 
 #endif  // END

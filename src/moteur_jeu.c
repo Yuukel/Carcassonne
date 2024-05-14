@@ -147,6 +147,7 @@ GameStruct WaitingForAction(GameStruct game) {
 
             if (ch == 'x') {
                 game.turn.turnEnd = 1;
+                // game = EndTurn(game);
             }
         } else if (game.turn.currentMode == Pion) {
             if (ch == ' ') {
@@ -156,6 +157,7 @@ GameStruct WaitingForAction(GameStruct game) {
             if (ch == 'x') {
                 game = RemovePawn(game, game.pawns[25]);
                 game.turn.turnEnd = 1;
+                // game = EndTurn(game);
             }
 
             if (ch == KEY_LEFT || ch == KEY_RIGHT || ch == KEY_UP || ch == KEY_DOWN) {
