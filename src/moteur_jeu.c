@@ -105,7 +105,7 @@ void InitNcurses() {
     init_pair(VILLE, COLOR_BLACK, COLOR_CYAN);
     init_pair(BLASON, COLOR_BLACK, COLOR_BLUE);
     init_pair(ABBAYE, COLOR_BLACK, COLOR_RED);
-    init_pair(FIN, COLOR_BLACK, COLOR_WHITE);
+    init_pair(FIN, COLOR_WHITE, COLOR_BLACK);
     init_pair(PLACEMENT, COLOR_BLACK, COLOR_WHITE);
 }
 
