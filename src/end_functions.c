@@ -53,7 +53,8 @@ GameStruct EndTurn(GameStruct game) {
             }
         } else if (side == 'v' || side == 'b') {
             int val = 0;
-            val = RouteScore(game, game.pawns[index].coords);
+            val = 2 * RouteScore(game, game.pawns[index].coords);
+            game.townSize = RouteScore(game, game.pawns[index].coords);
             if (RouteTown(game, game.pawns[index].coords)) {
                 game = AddScoreAbbey(game, game.pawns[index], val);
                 index++;
@@ -418,24 +419,22 @@ int RouteTown(GameStruct game, CoordStruct coords) {
 
     CoordStruct coordsList[4] = {{x, y - 1}, {x + 1, y}, {x, y + 1}, {x - 1, y}};
 
-    int val = 1;
+    int isComplete = 1;
     game.grid[x][y].visited = 1;
 
     for (int i = 0; i < 4; i++) {
         if ((game.grid[x][y].cotes[i] == 'v' || game.grid[x][y].cotes[i] == 'b') && game.grid[coordsList[i].x][coordsList[i].y].visited == 0 && (game.grid[coordsList[i].x][coordsList[i].y].centre == 'v' || game.grid[coordsList[i].x][coordsList[i].y].centre == 'b')) {
-            val *= RouteTown(game, coordsList[i]);
+            isComplete *= RouteTown(game, coordsList[i]);
         } else if ((game.grid[x][y].cotes[i] == 'v' || game.grid[x][y].cotes[i] == 'b') && game.grid[coordsList[i].x][coordsList[i].y].tileType == 0)
             return 0;
     }
 
-    return val;
+    return isComplete;
 }
 
 int RouteScore(GameStruct game, CoordStruct coords) {
     int x = coords.x;
     int y = coords.y;
-
-    if (game.grid[x][y].tileType == 0) return 0;
 
     CoordStruct coordsList[4] = {{x, y - 1}, {x + 1, y}, {x, y + 1}, {x - 1, y}};
 
@@ -443,8 +442,17 @@ int RouteScore(GameStruct game, CoordStruct coords) {
     game.grid[x][y].visited = 1;
 
     for (int i = 0; i < 4; i++) {
-        if ((game.grid[x][y].cotes[i] == 'v' || game.grid[x][y].cotes[i] == 'b') && game.grid[coordsList[i].x][coordsList[i].y].visited == 0) {
-            val += RouteTown(game, coordsList[i]);
+        if (game.grid[x][y].cotes[i] == 'b') {
+            val++;
+            break;
+        }
+    }
+
+    for (int i = 0; i < 4; i++) {
+        if ((game.grid[x][y].cotes[i] == 'v' || game.grid[x][y].cotes[i] == 'b') && game.grid[coordsList[i].x][coordsList[i].y].tileType == 0) {
+            return 0;
+        } else if ((game.grid[x][y].cotes[i] == 'v' || game.grid[x][y].cotes[i] == 'b') && (game.grid[coordsList[i].x][coordsList[i].y].cotes[(i + 2) % 4]) && (game.grid[coordsList[i].x][coordsList[i].y].visited == 0)) {
+            val += RouteScore(game, coordsList[i]);
         }
     }
 
