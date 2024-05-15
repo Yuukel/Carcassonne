@@ -78,6 +78,8 @@ typedef struct {
     TileStruct grid[143][143];
     TurnStruct turn;
     PawnStruct pawns[26];
+
+    int townSize;
 } GameStruct;
 
 #endif  // GAME_STRUCTURES

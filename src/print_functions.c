@@ -351,6 +351,8 @@ void PrintCommands(TurnStruct turn, GameStruct game) {
         } else if (turn.currentMode == Pion)
             printw("< ^ v > : Deplacer le pion dans le sens voulu     Espace : Poser le pion     X : Annuler");
     }
+    wmove(stdscr, 44, 0);
+    printw("%d", game.townSize);
 }
 
 GameStruct ResetCanBePlaced(GameStruct game) {

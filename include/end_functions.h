@@ -12,6 +12,7 @@ int RouteRoad(GameStruct game, CoordStruct coords);
 GameStruct AddScoreRoadLoop(GameStruct game, PawnStruct pawn, int score);
 int RouteRoadLoop(GameStruct game, CoordStruct coords);
 int RouteTown(GameStruct game, CoordStruct coords);
+int RouteScore(GameStruct game, CoordStruct coords);
 void PrintEndScreen(GameStruct game);
 
 #endif  // END

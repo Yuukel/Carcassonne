@@ -51,6 +51,15 @@ GameStruct EndTurn(GameStruct game) {
             } else {
                 index++;
             }
+        } else if (side == 'v' || side == 'b') {
+            int val = 0;
+            val = RouteScore(game, game.pawns[index].coords);
+            if (RouteTown(game, game.pawns[index].coords)) {
+                game = AddScoreAbbey(game, game.pawns[index], val);
+                index++;
+            } else {
+                index++;
+            }
         } else {
             index++;
         }
@@ -66,6 +75,7 @@ GameStruct AddScoreAbbey(GameStruct game, PawnStruct pawn, int score) {
     while (game.pawns[index].coords.x != pawn.coords.x || game.pawns[index].coords.y != pawn.coords.y) {
         index++;
     }
+    game.playerList[pawn.idPlayers - 1].nbPions++;
     game = RemovePawn(game, game.pawns[index]);
 
     return game;
@@ -339,6 +349,7 @@ int RouteRoad(GameStruct game, CoordStruct coords) {
     return size;
 }
 
+// A FAIRE
 GameStruct AddScoreRoadLoop(GameStruct game, PawnStruct pawn, int score) {
     return game;
 }
@@ -402,8 +413,42 @@ int RouteRoadLoop(GameStruct game, CoordStruct coords) {
 }
 
 int RouteTown(GameStruct game, CoordStruct coords) {
-    //
-    return 0;
+    int x = coords.x;
+    int y = coords.y;
+
+    CoordStruct coordsList[4] = {{x, y - 1}, {x + 1, y}, {x, y + 1}, {x - 1, y}};
+
+    int val = 1;
+    game.grid[x][y].visited = 1;
+
+    for (int i = 0; i < 4; i++) {
+        if ((game.grid[x][y].cotes[i] == 'v' || game.grid[x][y].cotes[i] == 'b') && game.grid[coordsList[i].x][coordsList[i].y].visited == 0 && (game.grid[coordsList[i].x][coordsList[i].y].centre == 'v' || game.grid[coordsList[i].x][coordsList[i].y].centre == 'b')) {
+            val *= RouteTown(game, coordsList[i]);
+        } else if ((game.grid[x][y].cotes[i] == 'v' || game.grid[x][y].cotes[i] == 'b') && game.grid[coordsList[i].x][coordsList[i].y].tileType == 0)
+            return 0;
+    }
+
+    return val;
+}
+
+int RouteScore(GameStruct game, CoordStruct coords) {
+    int x = coords.x;
+    int y = coords.y;
+
+    if (game.grid[x][y].tileType == 0) return 0;
+
+    CoordStruct coordsList[4] = {{x, y - 1}, {x + 1, y}, {x, y + 1}, {x - 1, y}};
+
+    int val = 1;
+    game.grid[x][y].visited = 1;
+
+    for (int i = 0; i < 4; i++) {
+        if ((game.grid[x][y].cotes[i] == 'v' || game.grid[x][y].cotes[i] == 'b') && game.grid[coordsList[i].x][coordsList[i].y].visited == 0) {
+            val += RouteTown(game, coordsList[i]);
+        }
+    }
+
+    return val;
 }
 
 void selectionSort(int t[], int n, GameStruct game) {
