@@ -79,7 +79,7 @@ typedef struct {
     TurnStruct turn;
     PawnStruct pawns[26];
 
-    int townSize;
+    int pawnssss[5];
 } GameStruct;
 
 #endif  // GAME_STRUCTURES

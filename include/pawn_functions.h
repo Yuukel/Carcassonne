@@ -10,6 +10,6 @@ GameStruct RemovePawn(GameStruct game, PawnStruct pawn);
 int CheckIfPlaceable(GameStruct game);
 int CheckIfPlaceableOnRoadLoop(GameStruct game, CoordStruct coords);
 int CheckIfPlaceableOnRoad(GameStruct game, CoordStruct coords);
-int CheckIfPlaceableOnTown(GameStruct game, CoordStruct coords);
+int CheckIfPlaceableOnTown(GameStruct game, CoordStruct coords, int side);
 
 #endif  // PAWN

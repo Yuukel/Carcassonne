@@ -99,6 +99,8 @@ int CheckIfPlaceable(GameStruct game) {
         } else if (game.grid[game.turn.currentX][game.turn.currentY].centre == 'r') {
             if (CheckIfPlaceableOnRoadLoop(game, (CoordStruct){game.turn.currentX, game.turn.currentY}) == 0) return 0;
             if (CheckIfPlaceableOnRoad(game, (CoordStruct){game.turn.currentX, game.turn.currentY}) == 0) return 0;
+        } else if (game.grid[game.turn.currentX][game.turn.currentY].cotes[game.pawns[25].side] == 'v' || game.grid[game.turn.currentX][game.turn.currentY].cotes[game.pawns[25].side] == 'b') {
+            if (CheckIfPlaceableOnTown(game, (CoordStruct){game.turn.currentX, game.turn.currentY}, game.pawns[25].side) == 0) return 0;
         }
     } else {
         if (game.grid[game.turn.currentX][game.turn.currentY].cotes[game.pawns[25].side] == 'p' || game.grid[game.turn.currentX][game.turn.currentY].cotes[game.pawns[25].side] == 'f') {
@@ -107,7 +109,7 @@ int CheckIfPlaceable(GameStruct game) {
             if (CheckIfPlaceableOnRoadLoop(game, (CoordStruct){game.turn.currentX, game.turn.currentY}) == 0) return 0;
             if (CheckIfPlaceableOnRoad(game, (CoordStruct){game.turn.currentX, game.turn.currentY}) == 0) return 0;
         } else if (game.grid[game.turn.currentX][game.turn.currentY].cotes[game.pawns[25].side] == 'v' || game.grid[game.turn.currentX][game.turn.currentY].cotes[game.pawns[25].side] == 'b') {
-            if (CheckIfPlaceableOnTown(game, (CoordStruct){game.turn.currentX, game.turn.currentY}) == 0) return 0;
+            if (CheckIfPlaceableOnTown(game, (CoordStruct){game.turn.currentX, game.turn.currentY}, game.pawns[25].side) == 0) return 0;
         }
     }
 
@@ -314,6 +316,48 @@ int CheckIfPlaceableOnRoad(GameStruct game, CoordStruct coords) {
     return 1;
 }
 
-int CheckIfPlaceableOnTown(GameStruct game, CoordStruct coords) {
-    return 1;
+int CheckIfPlaceableOnTown(GameStruct game, CoordStruct coords, int side) {
+    int x = coords.x;
+    int y = coords.y;
+
+    int thereIsNoPawn = 1;
+    game.grid[x][y].visited = 1;
+
+    if (game.grid[x][y].centre != 'v' && game.grid[x][y].centre != 'b') {
+        switch (side) {
+            case 0:
+                y--;
+                break;
+            case 1:
+                x++;
+                break;
+            case 2:
+                y++;
+                break;
+            case 3:
+                x--;
+                break;
+            default:
+                break;
+        }
+        game.grid[x][y].visited = 1;
+    }
+
+    for (int p = 0; p < 25; p++) {
+        if (game.pawns[p].coords.x == x && game.pawns[p].coords.y == y && game.pawns[p].side == 4) return 0;
+    }
+
+    CoordStruct coordsList[4] = {{x, y - 1}, {x + 1, y}, {x, y + 1}, {x - 1, y}};
+
+    for (int i = 0; i < 4; i++) {
+        for (int p = 0; p < 25; p++) {
+            if (game.pawns[p].coords.x == x && game.pawns[p].coords.y == y && game.pawns[p].side == i) return 0;
+        }
+
+        if ((game.grid[x][y].cotes[i] == 'v' || game.grid[x][y].cotes[i] == 'b') && game.grid[coordsList[i].x][coordsList[i].y].visited == 0 && (game.grid[coordsList[i].x][coordsList[i].y].centre == 'v' || game.grid[coordsList[i].x][coordsList[i].y].centre == 'b')) {
+            thereIsNoPawn *= CheckIfPlaceableOnTown(game, coordsList[i], 4);
+        }
+    }
+
+    return thereIsNoPawn;
 }

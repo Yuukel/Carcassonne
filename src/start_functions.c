@@ -11,8 +11,8 @@
 
 GameStruct InitGame(GameStruct game) {
     // Initialisation des joueurs
-    game.playerList[0] = (PlayerStruct){1, RED, 0, 5, 1};
-    game.playerList[1] = (PlayerStruct){2, GREEN, 0, 5, 0};
+    game.playerList[0] = (PlayerStruct){1, RED, 0, 7, 1};
+    game.playerList[1] = (PlayerStruct){2, GREEN, 0, 7, 0};
     game.playerList[2] = (PlayerStruct){0, 0, 0, 0, -1};
     game.playerList[3] = (PlayerStruct){0, 0, 0, 0, -1};
     game.playerList[4] = (PlayerStruct){0, 0, 0, 0, -1};
@@ -97,12 +97,3 @@ void InitPawns(PawnStruct* pawns) {
         pawns[i] = pawn;
     }
 }
-
-// void InitBuildings(BuildingStruct* buildings) {
-//     for (int i = 0; i < 25; i++) {
-//         buildings[i].coords = (CoordStruct){-1, -1};
-//         buildings[i].buildingType = '0';
-//         buildings[i].size = 0;
-//         buildings[i].side = 0;
-//     }
-// }

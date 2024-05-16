@@ -54,7 +54,7 @@ void PrintPlayers(GameStruct game) {
     }
     printw("\n");
     for (int j = 0; j < game.nbPlayers; j++) {
-        printw("|     ");
+        printw("|   ");
         for (int i = 0; i < game.playerList[j].nbPions; i++) {
             attron(COLOR_PAIR(game.playerList[j].color));
             printw("o ");
@@ -352,7 +352,7 @@ void PrintCommands(TurnStruct turn, GameStruct game) {
             printw("< ^ v > : Deplacer le pion dans le sens voulu     Espace : Poser le pion     X : Annuler");
     }
     wmove(stdscr, 44, 0);
-    printw("%d", game.townSize);
+    printw("%d %d %d %d %d", game.pawnssss[0], game.pawnssss[1], game.pawnssss[2], game.pawnssss[3], game.pawnssss[4]);
 }
 
 GameStruct ResetCanBePlaced(GameStruct game) {

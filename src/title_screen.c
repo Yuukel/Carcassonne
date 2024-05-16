@@ -191,7 +191,7 @@ GameStruct SelectPlayers(GameStruct game) {
         game.playerList[i].color = colors[i];
         game.playerList[i].isHuman = roles[i];
         game.playerList[i].score = 0;
-        game.playerList[i].nbPions = 5;
+        game.playerList[i].nbPions = 7;
     }
 
     return game;

@@ -13,9 +13,13 @@ GameStruct AddScoreRoadLoop(GameStruct game, PawnStruct pawn, int score);
 int PathRoadLoop(GameStruct game, CoordStruct coords);
 int PathTown(GameStruct game, CoordStruct coords, int side);
 int PathScoreTown(GameStruct game, CoordStruct coords, int side);
+GameStruct AddScoreTown(GameStruct game, PawnStruct pawn, int score);
+int HowManyPawnsInTheTown(GameStruct* game, CoordStruct coords, int side, int playerId);
 
 GameStruct EndGame(GameStruct game);
 GameStruct AddScoreAbbeyIncomplete(GameStruct game, PawnStruct pawn);
+GameStruct AddScoreRoadIncomplete(GameStruct game, PawnStruct pawn);
+GameStruct AddScoreTownIncomplete(GameStruct game, PawnStruct pawn);
 void PrintEndScreen(GameStruct game);
 
 #endif  // END

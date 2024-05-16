@@ -66,7 +66,6 @@ void PrintGameScreen(GameStruct game) {
                 game = WaitingForAction(game);
             else
                 game = AIActions(game);
-            // usleep(100000);
         } while (game.turn.turnEnd == 0);
         RemoveTile(game.pile);
         game = EndTurn(game);
