@@ -19,6 +19,6 @@ char* CurrentMode(TurnStruct turn);                                             
 void PrintTurnInfos(TurnStruct turn);                                            // affiche les infos actuelle du tour
 void PrintCommands(TurnStruct turn, GameStruct game);                            // affichage des commandes
 GameStruct ResetCanBePlaced(GameStruct game);                                    // reset des emplacements de tuiles posables
-GameStruct CanBePlaced(GameStruct game);                                         // affichage des emplacements de tuiles posables
+GameStruct CanBePlaced(GameStruct game);
 
 #endif  // PRINT

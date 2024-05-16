@@ -8,6 +8,5 @@ void ParseurCSV(char* fileName, TileStruct* pile);
 GameStruct PlaceStartingTile(GameStruct game);
 void ShufflePile(TileStruct* pile);
 void InitPawns(PawnStruct* pawns);
-// void InitBuildings(BuildingStruct* buildings);
 
 #endif  // START

@@ -42,7 +42,7 @@ typedef struct {
 typedef struct {
     CoordStruct coords;
     int idPlayers;
-    int side;  // N 0 - E 1 - S 2 - O 4 - C 5
+    int side;  // N 0 - E 1 - S 2 - O 3 - C 4
 } PawnStruct;
 
 typedef struct {

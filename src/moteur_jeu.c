@@ -17,8 +17,6 @@
 // A faire : commenter chaque fonction etc
 
 //*************************************
-#define DIMENSION_MAX 143
-
 #define RED 1
 #define GREEN 2
 #define YELLOW 3
@@ -33,11 +31,11 @@
 #define ABBAYE 11
 #define FIN 12
 #define PLACEMENT 13
-
 //*************************************
 
 // Fonctions pour ncurses
 void InitNcurses();
+void GameplayLoop(GameStruct game);
 
 GameStruct WaitingForAction(GameStruct game);
 GameStruct AIActions(GameStruct game);
@@ -45,8 +43,7 @@ int AIHaveToRotate(GameStruct game);
 
 GameStruct game;
 
-// afficher la grille en dessous (je vais dormir)
-void PrintGameScreen(GameStruct game) {
+void GameplayLoop(GameStruct game) {
     game.turn.coordXMin = -5;
     game.turn.coordYMin = -5;
     do {
@@ -85,13 +82,12 @@ int main(int argc, char* argv[]) {
 
     erase();
 
-    PrintGameScreen(game);
+    GameplayLoop(game);
 
     endwin();
     return 0;
 }
 
-// A commenter
 void InitNcurses() {
     initscr();
     cbreak();
