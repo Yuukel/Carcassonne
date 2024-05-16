@@ -35,7 +35,7 @@ GameStruct EndTurn(GameStruct game) {
         }
 
         if (side == 'a') {
-            if (RouteAbbey(game, game.pawns[index].coords)) {
+            if (PathAbbey(game, game.pawns[index].coords)) {
                 game = AddScoreAbbey(game, game.pawns[index], 9);
                 index++;
             } else {
@@ -43,19 +43,23 @@ GameStruct EndTurn(GameStruct game) {
             }
         } else if (side == 'r') {
             int val = 0;
-            val = RouteRoadLoop(game, game.pawns[index].coords);
-            if (val == 0) val = RouteRoad(game, game.pawns[index].coords);
+            val = PathRoadLoop(game, game.pawns[index].coords);
             if (val > 0) {
-                game = AddScoreRoad(game, game.pawns[index], val);
+                game = AddScoreRoadLoop(game, game.pawns[index], val);
                 index++;
             } else {
-                index++;
+                val = PathRoad(game, game.pawns[index].coords);
+                if (val == 0) {
+                    index++;
+                } else {
+                    game = AddScoreRoad(game, game.pawns[index], val);
+                }
             }
         } else if (side == 'v' || side == 'b') {
             int val = 0;
-            val = 2 * RouteScore(game, game.pawns[index].coords);
-            game.townSize = RouteScore(game, game.pawns[index].coords);
-            if (RouteTown(game, game.pawns[index].coords)) {
+            val = 2 * PathScoreTown(game, game.pawns[index].coords, game.pawns[index].side);
+            game.townSize = PathScoreTown(game, game.pawns[index].coords, game.pawns[index].side);
+            if (PathTown(game, game.pawns[index].coords, game.pawns[index].side)) {
                 game = AddScoreAbbey(game, game.pawns[index], val);
                 index++;
             } else {
@@ -82,7 +86,7 @@ GameStruct AddScoreAbbey(GameStruct game, PawnStruct pawn, int score) {
     return game;
 }
 
-int RouteAbbey(GameStruct game, CoordStruct coords) {
+int PathAbbey(GameStruct game, CoordStruct coords) {
     int x = coords.x;
     int y = coords.y;
 
@@ -246,7 +250,7 @@ GameStruct AddScoreRoad(GameStruct game, PawnStruct pawn, int score) {
     return game;
 }
 
-int RouteRoad(GameStruct game, CoordStruct coords) {
+int PathRoad(GameStruct game, CoordStruct coords) {
     int x = coords.x;
     int y = coords.y;
     int size = 0;
@@ -350,12 +354,119 @@ int RouteRoad(GameStruct game, CoordStruct coords) {
     return size;
 }
 
-// A FAIRE
 GameStruct AddScoreRoadLoop(GameStruct game, PawnStruct pawn, int score) {
+    int x = pawn.coords.x;
+    int y = pawn.coords.y;
+
+    int previousDirection = 4;  // on place la direction au centre
+    TileStruct tuile;
+
+    PawnStruct pawnsList[25];
+    int pawnIndex = 1;
+
+    pawnsList[0] = pawn;
+
+    // Choisir vers où on va partir
+    for (int i = 0; i < 4; i++) {
+        if (game.grid[x][y].cotes[i] == 'r') {
+            previousDirection = i;
+            break;
+        }
+    }
+
+    game.grid[x][y].visited = 1;  // Première tuile visitée
+
+    // Commencer le parcours
+    if (previousDirection == 0) {
+        y--;
+    } else if (previousDirection == 1) {
+        x++;
+    } else if (previousDirection == 2) {
+        y++;
+    } else if (previousDirection == 3) {
+        x--;
+    }
+
+    // Boucle de parcours
+    while (game.grid[x][y].centre == 'r' && game.grid[x][y].visited == 0) {
+        tuile = game.grid[x][y];
+        game.grid[x][y].visited = 1;  // tuile visitée
+
+        for (int p = 0; p < 25; p++) {
+            if (game.pawns[p].coords.x == x && game.pawns[p].coords.y == y && game.pawns[p].side == 4) {
+                pawnsList[pawnIndex] = game.pawns[p];
+                pawnIndex++;
+            }
+            if (game.pawns[p].coords.x == x && game.pawns[p].coords.y == y && game.pawns[p].side == (previousDirection + 2) % 4) {
+                pawnsList[pawnIndex] = game.pawns[p];
+                pawnIndex++;
+            }
+        }
+
+        if (tuile.cotes[0] == 'r' && previousDirection != 2) {
+            for (int p = 0; p < 25; p++) {
+                if (game.pawns[p].coords.x == x && game.pawns[p].coords.y == y && game.pawns[p].side == 0) {
+                    pawnsList[pawnIndex] = game.pawns[p];
+                    pawnIndex++;
+                }
+            }
+            previousDirection = 0;
+            y = y - 1;
+        } else if (tuile.cotes[1] == 'r' && previousDirection != 3) {
+            for (int p = 0; p < 25; p++) {
+                if (game.pawns[p].coords.x == x && game.pawns[p].coords.y == y && game.pawns[p].side == 1) {
+                    pawnsList[pawnIndex] = game.pawns[p];
+                    pawnIndex++;
+                }
+            }
+            previousDirection = 1;
+            x = x + 1;
+        } else if (tuile.cotes[2] == 'r' && previousDirection != 0) {
+            for (int p = 0; p < 25; p++) {
+                if (game.pawns[p].coords.x == x && game.pawns[p].coords.y == y && game.pawns[p].side == 2) {
+                    pawnsList[pawnIndex] = game.pawns[p];
+                    pawnIndex++;
+                }
+            }
+            previousDirection = 2;
+            y = y + 1;
+        } else if (tuile.cotes[3] == 'r' && previousDirection != 1) {
+            for (int p = 0; p < 25; p++) {
+                if (game.pawns[p].coords.x == x && game.pawns[p].coords.y == y && game.pawns[p].side == 3) {
+                    pawnsList[pawnIndex] = game.pawns[p];
+                    pawnIndex++;
+                }
+            }
+            previousDirection = 3;
+            x = x - 1;
+        }
+    }
+
+    game.townSize = pawnIndex;
+
+    int playersPawns[5];
+    for (int i = 0; i < pawnIndex; i++) {
+        playersPawns[pawnsList[i].idPlayers - 1] += 1;
+    }
+
+    int max = 0;
+    for (int i = 0; i < 5; i++) {
+        if (playersPawns[i] > max) max = playersPawns[i];
+    }
+
+    for (int i = 0; i < 5; i++) {
+        if (playersPawns[i] == max) game.playerList[i].score += score;
+    }
+
+    for (int i = 0; i < pawnIndex; i++) {
+        game.playerList[pawnsList[i].idPlayers - 1].nbPions++;
+        game = RemovePawn(game, pawnsList[i]);
+    }
+
     return game;
 }
 
-int RouteRoadLoop(GameStruct game, CoordStruct coords) {
+int PathRoadLoop(GameStruct game, CoordStruct coords) {
     int x = coords.x;
     int y = coords.y;
     int size = 0;
@@ -413,18 +524,39 @@ int RouteRoadLoop(GameStruct game, CoordStruct coords) {
     return size;
 }
 
-int RouteTown(GameStruct game, CoordStruct coords) {
+int PathTown(GameStruct game, CoordStruct coords, int side) {
     int x = coords.x;
     int y = coords.y;
-
-    CoordStruct coordsList[4] = {{x, y - 1}, {x + 1, y}, {x, y + 1}, {x - 1, y}};
 
     int isComplete = 1;
     game.grid[x][y].visited = 1;
 
+    if (game.grid[x][y].centre != 'v' && game.grid[x][y].centre != 'b') {
+        switch (side) {
+            case 0:
+                y--;
+                break;
+            case 1:
+                x++;
+                break;
+            case 2:
+                y++;
+                break;
+            case 3:
+                x--;
+                break;
+            default:
+                break;
+        }
+        if (game.grid[x][y].tileType == 0) return 0;
+        game.grid[x][y].visited = 1;
+    }
+
+    CoordStruct coordsList[4] = {{x, y - 1}, {x + 1, y}, {x, y + 1}, {x - 1, y}};
+
     for (int i = 0; i < 4; i++) {
         if ((game.grid[x][y].cotes[i] == 'v' || game.grid[x][y].cotes[i] == 'b') && game.grid[coordsList[i].x][coordsList[i].y].visited == 0 && (game.grid[coordsList[i].x][coordsList[i].y].centre == 'v' || game.grid[coordsList[i].x][coordsList[i].y].centre == 'b')) {
-            isComplete *= RouteTown(game, coordsList[i]);
+            isComplete *= PathTown(game, coordsList[i], 4);
         } else if ((game.grid[x][y].cotes[i] == 'v' || game.grid[x][y].cotes[i] == 'b') && game.grid[coordsList[i].x][coordsList[i].y].tileType == 0)
             return 0;
     }
@@ -432,11 +564,9 @@ int RouteTown(GameStruct game, CoordStruct coords) {
     return isComplete;
 }
 
-int RouteScore(GameStruct game, CoordStruct coords) {
+int PathScoreTown(GameStruct game, CoordStruct coords, int side) {
     int x = coords.x;
     int y = coords.y;
-
-    CoordStruct coordsList[4] = {{x, y - 1}, {x + 1, y}, {x, y + 1}, {x - 1, y}};
 
     int val = 1;
     game.grid[x][y].visited = 1;
@@ -448,23 +578,112 @@ int RouteScore(GameStruct game, CoordStruct coords) {
         }
     }
 
+    if (game.grid[x][y].centre != 'v' && game.grid[x][y].centre != 'b') {
+        switch (side) {
+            case 0:
+                y--;
+                break;
+            case 1:
+                x++;
+                break;
+            case 2:
+                y++;
+                break;
+            case 3:
+                x--;
+                break;
+            default:
+                break;
+        }
+        game.grid[x][y].visited = 1;
+        val++;
+        for (int i = 0; i < 4; i++) {
+            if (game.grid[x][y].cotes[i] == 'b') {
+                val++;
+                break;
+            }
+        }
+    }
+
+    CoordStruct coordsList[4] = {{x, y - 1}, {x + 1, y}, {x, y + 1}, {x - 1, y}};
+
     for (int i = 0; i < 4; i++) {
         if ((game.grid[x][y].cotes[i] == 'v' || game.grid[x][y].cotes[i] == 'b') && game.grid[coordsList[i].x][coordsList[i].y].tileType == 0) {
             return 0;
-        } else if ((game.grid[x][y].cotes[i] == 'v' || game.grid[x][y].cotes[i] == 'b') && (game.grid[coordsList[i].x][coordsList[i].y].cotes[(i + 2) % 4]) && (game.grid[coordsList[i].x][coordsList[i].y].visited == 0)) {
-            val += RouteScore(game, coordsList[i]);
+        } else if ((game.grid[x][y].cotes[i] == 'v' || game.grid[x][y].cotes[i] == 'b') && (game.grid[coordsList[i].x][coordsList[i].y].cotes[(i + 2) % 4] == 'v' || game.grid[coordsList[i].x][coordsList[i].y].cotes[(i + 2) % 4] == 'b') && (game.grid[coordsList[i].x][coordsList[i].y].visited == 0) && (game.grid[coordsList[i].x][coordsList[i].y].centre != game.grid[coordsList[i].x][coordsList[i].y].cotes[(i + 2) % 4])) {
+            val++;
+            game.grid[coordsList[i].x][coordsList[i].y].visited = 1;
+        } else if ((game.grid[x][y].cotes[i] == 'v' || game.grid[x][y].cotes[i] == 'b') && (game.grid[coordsList[i].x][coordsList[i].y].cotes[(i + 2) % 4] == 'v' || game.grid[coordsList[i].x][coordsList[i].y].cotes[(i + 2) % 4] == 'b') && (game.grid[coordsList[i].x][coordsList[i].y].visited == 0)) {
+            val += PathScoreTown(game, coordsList[i], 4);
         }
     }
 
     return val;
 }
 
+GameStruct EndGame(GameStruct game) {
+    int index = 0;
+    while (game.pawns[index].coords.x != -1) {
+        char side;
+        if (game.pawns[index].side == 4) {
+            side = game.grid[game.pawns[index].coords.x][game.pawns[index].coords.y].centre;
+        } else {
+            side = game.grid[game.pawns[index].coords.x][game.pawns[index].coords.y].cotes[game.pawns[index].side];
+        }
+
+        if (side == 'a') {
+            game = AddScoreAbbeyIncomplete(game, game.pawns[index]);
+            index++;
+        } else {
+            index++;
+        }
+    }
+
+    return game;
+}
+
+GameStruct AddScoreAbbeyIncomplete(GameStruct game, PawnStruct pawn) {
+    int x = pawn.coords.x;
+    int y = pawn.coords.y;
+
+    int score = 1;
+
+    if (game.grid[x - 1][y - 1].tileType == 1) {
+        score++;
+    }
+    if (game.grid[x][y - 1].tileType == 1) {
+        score++;
+    }
+    if (game.grid[x + 1][y - 1].tileType == 1) {
+        score++;
+    }
+    if (game.grid[x - 1][y].tileType == 1) {
+        score++;
+    }
+    if (game.grid[x + 1][y].tileType == 1) {
+        score++;
+    }
+    if (game.grid[x - 1][y + 1].tileType == 1) {
+        score++;
+    }
+    if (game.grid[x][y + 1].tileType == 1) {
+        score++;
+    }
+    if (game.grid[x + 1][y + 1].tileType == 1) {
+        score++;
+    }
+
+    game.playerList[pawn.idPlayers - 1].score += score;
+
+    return game;
+}
+
 void selectionSort(int t[], int n, GameStruct game) {
-    for (int i = 0; i < n - 1; i++) {
-        int maxIndex = i;
-        for (int j = i + 1; j < n; j++) {
-            if (game.playerList[j].score > game.playerList[maxIndex].score) {
-                int temp = t[i];
+    int temp;
+    for (int i = 0; i < n; ++i) {
+        for (int j = i + 1; j < n; ++j) {
+            if (game.playerList[t[i] - 1].score < game.playerList[t[j] - 1].score) {
+                temp = t[i];
                 t[i] = t[j];
                 t[j] = temp;
             }

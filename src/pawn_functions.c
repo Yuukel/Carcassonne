@@ -52,7 +52,7 @@ GameStruct PlacePawn(GameStruct game, CoordStruct coords, int side) {
 }
 
 GameStruct AddPawn(GameStruct game) {
-    if (CheckIfPlaceable(game)) {
+    if (CheckIfPlaceable(game) == 1) {
         int index = 0;
         while (game.pawns[index].idPlayers != -1) {
             index++;
@@ -63,6 +63,14 @@ GameStruct AddPawn(GameStruct game) {
         game.turn.turnEnd = 1;
 
         game.playerList[game.turn.currentPlayer.id - 1].nbPions--;
+
+        return game;
+    } else {
+        if (game.turn.currentPlayer.isHuman != 1) {
+            game.turn.turnEnd = 1;
+            game = RemovePawn(game, game.pawns[25]);
+            return game;
+        }
     }
 
     return game;
@@ -98,6 +106,8 @@ int CheckIfPlaceable(GameStruct game) {
         } else if (game.grid[game.turn.currentX][game.turn.currentY].cotes[game.pawns[25].side] == 'r') {
             if (CheckIfPlaceableOnRoadLoop(game, (CoordStruct){game.turn.currentX, game.turn.currentY}) == 0) return 0;
             if (CheckIfPlaceableOnRoad(game, (CoordStruct){game.turn.currentX, game.turn.currentY}) == 0) return 0;
+        } else if (game.grid[game.turn.currentX][game.turn.currentY].cotes[game.pawns[25].side] == 'v' || game.grid[game.turn.currentX][game.turn.currentY].cotes[game.pawns[25].side] == 'b') {
+            if (CheckIfPlaceableOnTown(game, (CoordStruct){game.turn.currentX, game.turn.currentY}) == 0) return 0;
         }
     }
 
@@ -301,5 +311,9 @@ int CheckIfPlaceableOnRoad(GameStruct game, CoordStruct coords) {
         }
     }
 
+    return 1;
+}
+
+int CheckIfPlaceableOnTown(GameStruct game, CoordStruct coords) {
     return 1;
 }

@@ -36,9 +36,8 @@ GameStruct SelectPlayers(GameStruct game) {
     int row = 0, column = 0;
     int nbPlayers = 2;
 
-    int colors[5] = {1, 2, 0, 0, 0};  // liste des couleurs pour chaque joueur
-    int roles[5] = {1, 0, -1, -1,
-                    -1};  // liste des "roles" pour chaque joueur (humain / ia)
+    int colors[5] = {1, 2, 0, 0, 0};    // liste des couleurs pour chaque joueur
+    int roles[5] = {1, 0, -1, -1, -1};  // liste des "roles" pour chaque joueur (humain / ia)
 
     // boucle while d'affichage et de gestion des touches lues au clavier
     do {

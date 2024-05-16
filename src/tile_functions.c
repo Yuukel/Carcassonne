@@ -129,6 +129,9 @@ GameStruct PlaceTile(GameStruct game, int ch) {
             game.turn.currentY = y;
             game.grid[x][y] = game.turn.currentTile;
             game.turn.nbTileInPile--;
+
+            // game.turn.coordXMin = x - 71 - 5;
+            // game.turn.coordYMin = y - 71 - 5;
         }
     }
 
