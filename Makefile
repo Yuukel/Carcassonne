@@ -2,7 +2,6 @@ SRC = ./src/
 INC = ./include/
 OBJ = ./obj/
 BIN = ./bin/
-NCR = ./ncurses/include/
 
 CC = gcc
 CFLAGS = -Wall -std=gnu11
@@ -16,7 +15,7 @@ run: $(EXEC)
 	$(BIN)$<
 
 $(EXEC): moteur_jeu.o title_screen.o start_functions.o print_functions.o draw_functions.o tile_functions.o pawn_functions.o end_functions.o
-	$(CC) $(OBJ)* -I $(INC) -o $(BIN)$@ -I $(NCR) -lncursesw
+	$(CC) $(OBJ)* -I $(INC) -o $(BIN)$@ -lncursesw
 	
 moteur_jeu.o: $(SRC)moteur_jeu.c
 	$(CC) $(CFLAGS) $< -c -I $(INC) -o $(OBJ)$@
